@@ -1,0 +1,14 @@
+<?xml version="1.0" ?>
+<widget xmlns="http://www.w3.org/ns/widgets" id="http://webinos.org/proximityreminder" version="0.1.0">
+  <!-- Name of the widget -->
+  <name>Proximity Reminder</name>
+  <!-- Description is shown when installing widget -->
+  <description>Create reminders based on where you are and what time it is.</description>
+  <!-- Start page for widget -->
+  <content src="index.html" />
+  <!-- Default icon for widget -->
+  <icon src="remind_me.png" />
+  <!-- Widget author -->
+  <author>John Lyle</author>
+</widget>
+
