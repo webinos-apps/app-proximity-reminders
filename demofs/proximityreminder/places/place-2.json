@@ -1,0 +1,10 @@
+{
+   "id":"place-2",
+   "datecreated":"October 15, 2013 11:13:00",
+   "description":"my house",
+   "coordinates":{
+      "latitude":null,
+      "longitude":null,
+      "altitude":null
+   }
+}

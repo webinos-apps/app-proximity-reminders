@@ -1,0 +1,14 @@
+{ 
+   "description" : "pick up the milk",
+   "when"        : [{  
+   	"date"      : "October 13, 2013 11:13:00",
+        "recurring" : "daily"
+   }], 
+   "where"       : [{
+	"place" 	  : "place-1",
+    "proximity"  : {
+			"amount" : 10,
+			"units"  : "metres"
+		}
+   }]
+}

@@ -5,16 +5,25 @@
     <title>Proximity Reminder</title>
     <script type="text/javascript" src="./jquery-1.8.2.js"></script>
     <script type="text/javascript" src="./webinos.js"></script>
+    <script type="text/javascript" src="./storereminders.js"></script>    
+    <script type="text/javascript" src="./findreminders.js"></script>    
     <script type="text/javascript" src="./main.js"></script>    
     <link rel="stylesheet" type="text/css" href="proximityreminder.css" />
-    <link rel="icon" type="image/png" href="./remind_me.png"></link> 
+    <link rel="icon" type="image/png" href="./remind_me.png" />
 </head>
 <body>
 <div id="content">
     <div id="frontpage">
-        <button class="frontbutton" type="button">Create a reminder</button><br />
-        <button class="frontbutton" type="button">View reminders</button>
+        <button id="createReminder" class="frontbutton" type="button" disabled="true">
+			Create a reminder
+		</button>
+		<br />
+        <button id="viewReminders" class="frontbutton" type="button"  disabled="true">
+			View reminders
+		</button>
     </div>
+	<hr />
+	<p id="frontStatus" class='status'>Not connected to webinos</p>
 </div>
 </body>
 </html>
