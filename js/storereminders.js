@@ -34,7 +34,7 @@ function toArray(list) {
 
 function fileToObject(fs, fileEntry, successcb, errorcb) {
 	fileEntry.file(function(file) {       
-	   var reader = new webinos.file.FileReader(fs);
+	   var reader = new window.FileReader(fs);
        reader.onloadend = function(e) {
          var place = JSON.parse(this.result);
 	     successcb(place);
