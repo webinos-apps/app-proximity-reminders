@@ -3,13 +3,15 @@
 <head profile="http://www.w3.org/2005/10/profile">
     <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
     <title>Proximity Reminder</title>
-    <script type="text/javascript" src="./jquery-1.8.2.js"></script>
-    <script type="text/javascript" src="./webinos.js"></script>
-    <script type="text/javascript" src="./storereminders.js"></script>    
-    <script type="text/javascript" src="./viewreminders.js"></script>    
-    <script type="text/javascript" src="./editreminder.js"></script>    
-    <script type="text/javascript" src="./main.js"></script>    
-    <link rel="stylesheet" type="text/css" href="proximityreminder.css" />
+    <script type="text/javascript" src="./js/jquery-1.8.2.js"></script>
+    <script type="text/javascript" src="./js/jquery-ui-1.9.0.custom.min.js"></script>
+    <script type="text/javascript" src="./js/webinos.js"></script>
+    <script type="text/javascript" src="./js/storereminders.js"></script>    
+    <script type="text/javascript" src="./js/viewreminders.js"></script>    
+    <script type="text/javascript" src="./js/editreminder.js"></script>    
+    <script type="text/javascript" src="./js/main.js"></script>    
+    <link rel="stylesheet" type="text/css" href="./css/proximityreminder.css" />
+    <link rel="stylesheet" type="text/css" href="./css/jquery-ui-1.9.0.custom.css" />
     <link rel="icon" type="image/png" href="./remind_me.png" />
 </head>
 <body>
@@ -31,7 +33,10 @@
                     <td>Description</td>
                     <td><input id="editDescription" type="text"></input></td>
                 </tr>
-                <tr></tr>
+                <tr>
+                    <td>Date</td>
+                    <td><div id="datepicker"></div></td>
+                </tr>
             </table>
             <button id="saveReminderButton" class="frontbutton" type="button">
                 Save reminder
@@ -42,7 +47,8 @@
             <table id="viewTable" class="reminderTable">
                 <tr><th>Description</th><th>When?</th><th>Where?</th></tr>       
             </table>      
-            <h1>Places</h1>   
+            <h1>Places</h1>
+  
             <ul class="placeList" id="placeUL">
                 
             </ul>   

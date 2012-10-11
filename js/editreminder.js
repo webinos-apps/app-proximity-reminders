@@ -25,6 +25,8 @@ function getEditFields(reminderId) {
 
     var editTable = $("#editTable");
 
+    $("#datepicker").datepicker();
+
     $("#saveReminderButton").click(saveReminder);
     
     
