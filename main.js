@@ -2,6 +2,8 @@
 
 var places;
 var reminders;
+var VIEW_DIV_ID = "viewDiv";
+var EDIT_DIV_ID = "editDiv";
 
 $(document).ready(function() {
 
@@ -11,7 +13,9 @@ $(document).ready(function() {
 		loadApp();	
 	},
 	function(err) {
-		console.log("Error!!!! " + err);
+	    $("#frontStatus").css("color","red");
+	    $("#frontStatus").text("Error connecting to webinos");
+		console.log("Error:  " + err);
 	});
 
 	
@@ -29,122 +33,46 @@ function makeEnabled() {
 
 function loadApp() {
 	makeEnabled();
-	$("#viewReminders").click(function() {
-		showRemindersPage();
-		showPlaces();
-		$("#frontpage").append("<div id='map'></div>");
+	$("#createReminder").click(function() {
+        hideViewPage();
+        loadAddPage();
 	});
+	$("#viewReminders").click(function() {
+        hideAddPage();
+        loadViewPage();
+	});	
 }
 
 
-function showRemindersPage() {
-	
-	var table = $('<table></table>').addClass("reminderTable");
-	var headerRow = $('<tr><th>Description</th><th>When?</th><th>Where?</th></tr>');
-	table.append(headerRow);
-    for (var i=0; i<reminders.length; i++) {
-	     var row = showReminderRow(reminders[i]);
-		 table.append(row);
-	}	
-	var heading = $('<h1></h1>').text("Reminders");
-
-	$("#frontpage").append(heading);
-	$("#frontpage").append(table);
-}	
-
-function highlightPlace() {
-	var id = $(this).attr("id");
-	id = id.substring(id.indexOf("-")+1, id.length);
-	console.log( id );	
-	showMapId(id);
-
+function hideAddPage() {
+    if ($("#"+EDIT_DIV_ID).length > 0) {
+        $("#"+EDIT_DIV_ID).hide();
+    }
 }
 
-function showReminderRow(reminder) {
-	console.log("Displaying " + JSON.stringify(reminder));
-
-	var row   = $('<tr></tr>');
-	var desc  = $('<td></td>').text(reminder.description);
-	var when  = $('<td></td>');	
-	for (var i=0;i<when.length;i++) {
-		when.append(reminder.when[i].date + ", Recurrance: " + 
-			reminder.when[i].recurring + "<br />");
-	}
-	var where = $('<td></td>')	
-	for (var i=0;i<where.length;i++) {
-		where.append(createWhereLink(reminder.where[i]));
-		where.append(" (within " + reminder.where[i].proximity.amount + " " +  
-		reminder.where[i].proximity.units + ") <br/>");
-	}
-	
-	row.append(desc);
-	row.append(when); 
-	row.append(where);
-	return row;
+function loadAddPage() {
+    var addDiv = $("#"+EDIT_DIV_ID);   
+    addDiv.show();  
+    getEditPage(null);    
 }
 
 
-function createWhereLink(whereObject) {
-	var whereLink = $('<a></a>');
-	whereLink.attr('id', "linkto-" + whereObject.place.id);
-	whereLink.attr('href', "#" + whereObject.place.id);
-	whereLink.addClass("whereLink");
-	whereLink.click(highlightPlace);
-	whereLink.text(whereObject.place.description);
-	return whereLink;
+
+function hideViewPage() {
+    if ($("#"+VIEW_DIV_ID).length > 0) {
+        $("#"+VIEW_DIV_ID).hide();
+    }
 }
 
-function showPlaces() {
-
-	var list = $('<ul></ul>');
-	list.addClass('placeList');
-
-    for (var i=0; i<places.length; i++) {
-		var placeItem = $('<li></li>');
-		var placeLink = $('<a></a>');
-		placeLink.text(places[i].description);
-		placeLink.attr('id', "" + places[i].id);
-		placeLink.attr('href', "#" + places[i].id);
-		placeLink.click(showMap);
-		placeItem.append(placeLink);
-		list.append(placeItem);
-	}	
-	var heading = $('<h1></h1>').text("Places");
-
-
-	$("#frontpage").append(heading);
-	$("#frontpage").append(list);
-
+function loadViewPage() {
+    $("#morecontent").append("<div id='" + VIEW_DIV_ID + "'></div>"); 
+    var viewDiv = $("#"+VIEW_DIV_ID);
+    getRemindersPage();
+    getPlaces();     
+    viewDiv.show();  
 }
 
-function showMapId(id) {
-	for (var i=0;i<places.length;i++) {		
-		if (places[i].id === id) {
-			console.log("Found the place: " + places[i].id + " - " + places[i].description);			
-			$('#map').html(getGoogleMap(places[i].coordinates));
-			$('#' + id).addClass("selectedPlace");
-		} else {
-			console.log("Not the place: " + places[i].id + " - " + places[i].description);
-			$('#' + id).removeClass("selectedPlace");
-		}
-	}
-}
 
-function showMap() {
-	var id = $(this).attr("id");
-	showMapId(id);
-}
-
-function getGoogleMap(coords) {
-	var image_url = "http://maps.googleapis.com/maps/api/staticmap?" + 
-			"center=" + 
-			coords.latitude + "," +
-            coords.longitude + 
-			"&zoom=14&size=400x400&sensor=false"
-	var gMap = $("<img />");
-	gMap.attr("src", image_url).attr('id','imgmap');
-	return gMap;
-}
 
 
 /* JSON object describing a reminder:

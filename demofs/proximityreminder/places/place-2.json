@@ -3,8 +3,8 @@
    "datecreated":"October 15, 2013 11:13:00",
    "description":"my house",
    "coordinates":{
-      "latitude":null,
-      "longitude":null,
+      "latitude":"42.731596",
+      "longitude":"25.483115",
       "altitude":null
    }
 }

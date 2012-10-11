@@ -13,13 +13,18 @@
 }
 
 .reminderTable {
-	
-		border: 1px solid black;
-		padding: 5px;
-		width: 100%;
+    border: 1px solid black;
+    padding: 5px;
+    width: 100%;
 }
 
 .selectedPlace {
 	background-color: yellow;
 	color: red;
 }
+
+.hiddenDiv {
+    display:none;
+}
+
+
