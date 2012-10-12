@@ -1,17 +1,20 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-GB" lang="en-GB">
+<!DOCTYPE html>
+<html>
 <head profile="http://www.w3.org/2005/10/profile">
     <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
     <title>Proximity Reminder</title>
     <script type="text/javascript" src="./js/jquery-1.8.2.js"></script>
     <script type="text/javascript" src="./js/jquery-ui-1.9.0.custom.min.js"></script>
+    <script type="text/javascript" src="./js/jquery-ui-timepicker-addon.js"></script>    
     <script type="text/javascript" src="./js/webinos.js"></script>
-    <script type="text/javascript" src="./js/storereminders.js"></script>    
+    <script type="text/javascript" src="./js/storereminders.js"></script>   
+    <script type="text/javascript" src="./js/geoTools.js"></script>         
     <script type="text/javascript" src="./js/viewreminders.js"></script>    
     <script type="text/javascript" src="./js/editreminder.js"></script>    
     <script type="text/javascript" src="./js/main.js"></script>    
     <link rel="stylesheet" type="text/css" href="./css/proximityreminder.css" />
     <link rel="stylesheet" type="text/css" href="./css/jquery-ui-1.9.0.custom.css" />
+    <link rel="stylesheet" type="text/css" href="./css/jquery-ui-timepicker-addon.css" />
     <link rel="icon" type="image/png" href="./remind_me.png" />
 </head>
 <body>
@@ -34,8 +37,54 @@
                     <td><input id="editDescription" type="text"></input></td>
                 </tr>
                 <tr>
-                    <td>Date</td>
-                    <td><div id="datepicker"></div></td>
+                    <td>When?</td>
+                    <td>
+                    <select id="dateSelect">
+                        <option val="any">Any time</option>
+                        <option val="select">Select a time</option>
+                    </select>
+                    <div style="display:none;" id="dateWrapper">
+                        <div id="datepicker"></div>
+                        Reccurring: 
+                        <select id="recurringSelect">
+                            <option value="never" selected="true">Never</option>
+                            <option value="daily" >Daily</option>
+                            <option value="weekly">Weekly</option>
+                            <option value="monthly">Monthly</option>
+                            <option value="yearly">Yearly</option>
+                        </select>
+                    </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Where?</td>
+                    <td>
+                        <select id="placeSelect">
+                        <option value="_ANYWHERE" selected="true" id="place-option-_ANYWHERE">
+                            Anywhere
+                        </option>
+                        <select>
+                        <div id="proximityDiv" style="display:none;">
+                            - within <input id="proximityAmount" type="text" value="10" width="50px"></input> 
+                            <select id="proximityUnits">
+                                <option selected="true" value="metres">metres</option>
+                                <!--
+                                <option>feet</option>
+                                <option>yards</option>
+                                <option>kilometers</option>
+                                <option>miles</option>
+                                -->
+                            </select>
+                        </div>
+                    </td>
+                </tr>
+                <tr style="display:none;" id="placeAddRow1">
+                    <td>Place description</td>
+                    <td><input id="editPlaceDescription" type="text"></input></td>
+                </tr>
+                <tr style="display:none;" id="placeAddRow2">
+                    <td>Select location</td>
+                    <td><div style="width:300pt; height:300pt" id="editPlaceLocationSelect"></div></td>
                 </tr>
             </table>
             <button id="saveReminderButton" class="frontbutton" type="button">

@@ -67,11 +67,7 @@ function placeFileToObject(fs, placeFile, successcb, errorcb) {
 }
 
 function getPlace(placeid, places) {
-	for (var i=0;i<places.length;i++) {
-		if (places[i].id === placeid) {
-			return places[i];
-		}
-	}
+	return places[placeid];
 }
 
 function reminderFileToObject(places, fs, reminderFile, successcb, errorcb) {
@@ -82,7 +78,8 @@ function reminderFileToObject(places, fs, reminderFile, successcb, errorcb) {
 	fileToObject(fs, reminderFile, function(reminder) {
 		//link to the places file.		
 		for (var i=0;i<reminder.where.length;i++) {
-			reminder.where[i].place = getPlace(reminder.where[i].place, places);
+			reminder.where[i].place = places[ reminder.where[i].place ];
+			console.log("Reminder : " + JSON.stringify(reminder) + " has place " + places[reminder.where[i].place] );
 		}
 		successcb(reminder);
 	}, errorcb);
@@ -100,11 +97,21 @@ function processPlacesFiles(fs, placesFiles, successcb, errorcb) {
 	listOfFilesToObjects(fs, placesFiles, placeFileToObject, successcb, errorcb);
 }
 
+function arrayToObject(arr, idfield) {
+    var obj = {};
+    for (var i=0;i<arr.length;i++) {
+        var key = arr[i][idfield];
+        var val = arr[i];
+        obj[key] = val;
+    }
+    return obj;
+}
 
 function getData(fs,dirs,successcb,errorcb) {
 	//console.log("Getting data from " + dirs.placesdir.name + " and " + dirs.remindersdir.name);
 	getFiles(fs, dirs.placesdir, function(placesFiles) {
-		processPlacesFiles(fs, placesFiles, function (places) {		
+		processPlacesFiles(fs, placesFiles, function (placesArr) {		
+			var places = arrayToObject(placesArr, "id");
 			//console.log("Places found : " + JSON.stringify(places));			
 			getFiles(fs, dirs.remindersdir, function(reminderFiles) {
 				processReminderFiles(fs, reminderFiles, places, function(reminders) {

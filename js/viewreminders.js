@@ -59,12 +59,12 @@ function getPlaces() {
 	var list = $('#placeUL');
 	list.empty();
 
-    for (var i=0; i<places.length; i++) {
+    for (var p in places) {
 		var placeItem = $('<li></li>');
 		var placeLink = $('<a></a>');
-		placeLink.text(places[i].description);
-		placeLink.attr('id', "" + places[i].id);
-		placeLink.attr('href', "#" + places[i].id);
+		placeLink.text(places[p].description);
+		placeLink.attr('id', "" + places[p].id);
+		placeLink.attr('href', "#" + places[p].id);
 		placeLink.click(showMap);
 		placeItem.append(placeLink);
 		list.append(placeItem);
@@ -74,9 +74,9 @@ function getPlaces() {
 }
 
 function showMapId(id) {
-	for (var i=0;i<places.length;i++) {		
-		if (places[i].id === id) {
-			$('#map').html(getGoogleMap(places[i].coordinates));
+	for (var p in places) {		
+		if (places[p].id === id) {
+			$('#map').html(getGoogleMap(places[p].coordinates));
 			$('#' + id).addClass("selectedPlace");
 		} else {
 			$('#' + id).removeClass("selectedPlace");
