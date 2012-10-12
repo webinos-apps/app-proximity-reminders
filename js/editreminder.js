@@ -17,6 +17,7 @@ function changeHeading(reminderId) {
 
 function createAddObjects() {
     var add = {
+        isNew : ($('#editHeading').text() === "Add Reminder"),
         reminder : {},
         place : null
     };
@@ -81,12 +82,34 @@ function getEditWhen() {
     }
 }
 
-function saveReminder() {   
-    var newVals = createAddObjects();
+function isPlace(place) {
+    return !(place === null || place === "anywhere");
+}
+
+function saveEditReminder() {   
+    var add = createAddObjects();
+    //TODO: Sanity check input.
     
-    //TODO: Actually add the reminder.
-    // use storereminders 'saveReminder' and 'savePlace'
-    alert("Submit: " + JSON.stringify(newVals));
+    console.log("Adding: " + JSON.stringify(add));
+    
+    savePlace(add.place, function() {  
+        if (isPlace(add.place)) {
+            places[add.place.id] = add.place;  
+            console.log("Added " + add.place.id);            
+        } 
+        saveReminder(add.reminder, function() {
+            if (add.isNew) {
+                reminders.push(add.reminder);
+                alert("Successfull saved reminder: " + add.reminder.description);
+            } else {
+                //TODO ?
+            }
+        }, function(err) {
+            alert("Failed to add reminder: " + add.reminder.description);
+        });
+    }, function(err) {
+        alert("Failed to add place: " + add.place.description);
+    });
 }
 
 function dateTimeSelect() {
@@ -191,7 +214,7 @@ function getEditFields(reminderId) {
 
     $("#placeSelect").change(placeSelect);
 
-    $("#saveReminderButton").click(saveReminder);
+    $("#saveReminderButton").click(saveEditReminder);
     
 }
 

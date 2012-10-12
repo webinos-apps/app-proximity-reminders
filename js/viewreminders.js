@@ -29,8 +29,10 @@ function getReminderRow(reminder) {
 	var where = $('<td></td>')	
 	for (var i=0;i<where.length;i++) {
 		where.append(getWhereLink(reminder.where[i]));
-		where.append(" (within " + reminder.where[i].proximity.amount + " " +  
-		reminder.where[i].proximity.units + ") <br/>");
+		if (reminder.where[i].proximity !== undefined) { 
+		    where.append(" (within " + reminder.where[i].proximity.amount + " " +  
+    		reminder.where[i].proximity.units + ") <br/>");
+		}
 	}
 	
 	row.append(desc);
@@ -41,12 +43,17 @@ function getReminderRow(reminder) {
 
 
 function getWhereLink(whereObject) {
-	var whereLink = $('<a></a>');
-	whereLink.attr('id', "linkto-" + whereObject.place.id);
-	whereLink.attr('href', "#" + whereObject.place.id);
-	whereLink.addClass("whereLink");
-	whereLink.click(highlightPlace);
-	whereLink.text(whereObject.place.description);
+	var whereLink;
+	if (whereObject.place !== undefined ) {
+        whereLink = $('<a></a>');
+    	whereLink.attr('id', "linkto-" + whereObject.place.id);
+	    whereLink.attr('href', "#" + whereObject.place.id);
+    	whereLink.addClass("whereLink");
+    	whereLink.click(highlightPlace);
+    	whereLink.text(whereObject.place.description);
+	} else {
+	    whereLink = $("<span>Any location</span>");
+	}
 	return whereLink;
 }
 

@@ -1,12 +1,80 @@
 /* This file uses globals.  Read the globals.js to check which ones */
 
-/* use the FileAPI to save a reminder to disk. */
-function saveReminder(reminder, successcb, errorcb) {
 
+function createReminderId(reminder) {
+    return "reminder-"+ Date.now();
 }
 
-function savePlace(place, successcb, errorcb) {
+/* use the FileAPI to save a reminder to disk. */
+function saveReminder(reminder, successcb, errorcb) {
+    //pre: the reminder's 'place' has been detatched
+    console.log("Requested to save reminder: " + reminder.description);
+    getFileService(function(svc) {
+		getDirectories(fileService, function(fs, dirs) {
+		    var reminderId = createReminderId(reminder);
+			saveTextFile(dirs.remindersdir, 
+			    JSON.stringify(reminder), 
+			    reminderId+".json",
+			    successcb,
+			    errorcb);
+		}, function(err) {
+			console.log(err.code);
+			errorcb(err);
+		});
+	}, function(err) {
+		console.log(err.code);
+		errorcb(err);
+	});     
+}
 
+
+function savePlace(place, successcb, errorcb) {
+   if (place === null || place === "anywhere") {
+        console.log("No need to add place: not real");
+        successcb();
+        return;
+   }
+   console.log("Requested to save reminder: " + place.description);
+   getFileService(function(svc) {
+		getDirectories(fileService, function(fs, dirs) {
+			saveTextFile(dirs.placedir, 
+			    JSON.stringify(place), 
+			    place.id+".json",
+			    successcb, 
+			    errorcb);
+		}, function(err) {
+			console.log(err.code);
+			errorcb(err);
+		});
+	}, function(err) {
+		console.log(err.code);
+		errorcb(err);
+	}); 
+}
+
+
+function saveTextFile(dir, val, filename, successcb, errorcb) {
+    console.log("Saving text file: " + filename);
+    dir.getFile(filename, {create:true}, function(fileEntry) {
+        fileEntry.createWriter(function(fileWriter) {
+
+        fileWriter.onwriteend = function(e) {
+            console.log('Write completed.');
+            successcb();
+        };
+
+        fileWriter.onerror = function(e) {
+            console.log('Write failed: ' + e.toString());
+            errorcb(e);
+        };
+
+        var blob = new Blob([val], {type: 'text/plain'});
+
+        fileWriter.write(blob);
+
+        }, errorcb);    
+        
+    }, errorcb);
 }
 
 
@@ -15,7 +83,7 @@ function savePlace(place, successcb, errorcb) {
 function getAllData(successcb, errorcb) {
 	getFileService(function(svc) {
 		getDirectories(fileService, function(fs, dirs) {
-			getData(fileSystem, dirs, successcb, errorcb)
+			getData(fileSystem, dirs, successcb, errorcb);
 		}, function(err) {
 			console.log(err.code);
 			errorcb(err);
@@ -159,14 +227,17 @@ function getDirectoryContent(fs, dir, successcb, errorcb) {
 }
 
 function getFileSystem(fileService, successcb, errorcb) {
-	if (fileSystem !== null) return fileSystem;
-	fileService.requestFileSystem(window.PERSISTENT, 5*1024*1024, successcb, errorcb);
+	if (fileSystem !== null) {
+	    successcb(fileSystem);
+	} else {
+	    fileService.requestFileSystem(window.PERSISTENT, 5*1024*1024, successcb, errorcb);
+	}
 }
 
 
 function getDirectories(fileService, successcb, errorcb) {
 	getFileSystem(fileService, onInitFs, fsErrorHandler);
-	
+
 	function onInitFs(fs) {
 		fileSystem = fs;
 		console.log("Got file system: " + fs.name);		
@@ -192,8 +263,12 @@ function getDirectories(fileService, successcb, errorcb) {
 
 
 function getFileService(successcb, errorcb) {
-	if (fileService !== null) return fileService;
+	if (fileService !== null) {
+	    successcb(fileService);
+	    return;
+	}
 	var once = false;
+	
 
 	function find() {
 	    webinos.discovery.findServices(
