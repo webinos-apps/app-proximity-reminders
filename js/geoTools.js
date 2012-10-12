@@ -50,10 +50,9 @@ function geoGetCurrentPosition(successcb, errorcb) {
 
 
 function loadGoogleMapsScript(callbackname) {
-  var key = "AIzaSyAp09H6HbIr_UtOovVHBncao-iOhtud1TA";
   var script = document.createElement("script");
   script.type = "text/javascript";
-  script.src = "http://maps.googleapis.com/maps/api/js?key=" + key + "&sensor=false&callback=" + callbackname;
+  script.src = "http://maps.googleapis.com/maps/api/js?&sensor=false&callback=" + callbackname;
   document.body.appendChild(script);
 }
 
