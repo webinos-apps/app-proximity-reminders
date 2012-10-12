@@ -1,9 +1,4 @@
-/* All of ProximityReminder's JavaScript */
-
-var places;
-var reminders;
-var VIEW_DIV_ID = "viewDiv";
-var EDIT_DIV_ID = "editDiv";
+/* This file uses globals.  Read the globals.js to check which ones */
 
 $(document).ready(function() {
 
@@ -17,9 +12,6 @@ $(document).ready(function() {
 	    $("#frontStatus").text("Error connecting to webinos");
 		console.log("Error:  " + err);
 	});
-
-	
-
 
 });
 

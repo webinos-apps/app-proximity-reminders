@@ -1,5 +1,4 @@
-/* edit reminder */
-
+/* This file uses globals.  Read the globals.js to check which ones */
 
 function getEditPage(reminderId) {
     changeHeading(reminderId);
@@ -16,12 +15,82 @@ function changeHeading(reminderId) {
     }
 }
 
+function createAddObjects() {
+    var add = {
+        reminder : {},
+        place : null
+    };
+    add.place = getEditPlace();    
+    add.reminder.description = $('#editDescription').val();
+    add.reminder.when = [];
+    add.reminder.when.push(getEditWhen());
+    add.reminder.where = [];
+    add.reminder.where.push(getEditWhere(add.place));
+    return add;
+}
+
+function getEditPlace() {
+    var place;
+    if ($('#placeSelect').val() !== "_ANYWHERE") {
+        place = {};
+        if ($('#placeSelect').val() === '_NEWPLACE') {
+            place.id = getNewPlaceId();
+            place.datecreated = new Date();
+            place.description = $('#editPlaceDescription').val();    
+            var latlng = editMap.getCenter();
+            place.coordinates = {
+                latitude  : latlng.lat(),
+                longitude : latlng.lng()
+            };
+            return place;
+        } else {
+            return places[$('#placeSelect').val()];
+        }
+    } else {
+        return null;
+    }
+}
+
+function getNewPlaceId() {
+    return "place-" + Date.now();
+}
+
+
+function getEditWhere(place) {
+    //pre: given a place with a valid id.
+    if (place === null) {
+        return "anywhere";
+    } else {
+        return {
+            "place" : place.id,
+            "proximity" : {
+                amount : $('#proximityAmount').val(),
+                units : $('#proximityUnits').val()
+            }
+        }
+    }
+}
+
+function getEditWhen() {
+    if ($("#dateSelect").val() === 'selecttime') {
+        var dateSelected = $("#datepicker").datepicker( "getDate" )
+        var recurr = $('#recurringSelect').val();
+        return { date : dateSelected, recurring : recurr };
+    } else {
+        return "anytime";
+    }
+}
+
 function saveReminder() {   
-    alert("Submit!");
+    var newVals = createAddObjects();
+    
+    //TODO: Actually add the reminder.
+    // use storereminders 'saveReminder' and 'savePlace'
+    alert("Submit: " + JSON.stringify(newVals));
 }
 
 function dateTimeSelect() {
-    if ($("#dateSelect").val() === 'Select a time') {
+    if ($("#dateSelect").val() === 'selecttime') {
         $("#dateWrapper").show();
     } else {   
         $('#dateWrapper').hide();            
@@ -46,8 +115,7 @@ function loadEditGoogleMap() {
 
 function displayEditMap(position) {
     console.log("Displating map at position " + JSON.stringify(position));
-    var map;
-    map = new google.maps.Map(document.getElementById('editPlaceLocationSelect'), {
+    editMap = new google.maps.Map(document.getElementById('editPlaceLocationSelect'), {
         mapTypeId: google.maps.MapTypeId.ROADMAP,
         center: position,
         zoom: 12
@@ -66,6 +134,8 @@ function placeSelect() {
         
         loadEditGoogleMap();
         
+        showProximityField();
+        
         $("#placeAddRow1").show();
         $("#placeAddRow2").show();       
     } else {
@@ -74,6 +144,9 @@ function placeSelect() {
             $("#editPlaceDescription").val(place.description);
             $("#editPlaceLocationSelect").html(getGoogleMap(place.coordinates));
         }
+        
+        showProximityField();
+        
         $("#placeAddRow1").show();
         $("#placeAddRow2").show();       
     }
@@ -82,15 +155,16 @@ function placeSelect() {
 function showProximityField(reminder) {
     //HACK: Currently only works for single places.
     $('#proximityDiv').show();
-    if (reminder === null || 
-        reminder.where === null || 
-        reminder.where[0] === null ||
-        reminder.where[0].proximity === null || 
-        reminder.where[0].proximity.amount === null
+    if (reminder == undefined || 
+        reminder.where == undefined || 
+        reminder.where[0] == undefined ||
+        reminder.where[0].proximity == undefined || 
+        reminder.where[0].proximity.amount == undefined
         ) {
         $('#proximityAmount').val("10");
     } else {
         $('#proximityAmount').val(reminder.where[0].proximity.amount);
+        $('#proximityUnits').val(reminder.where[0].proximity.units);
     }
 }
 

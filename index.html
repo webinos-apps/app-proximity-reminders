@@ -7,6 +7,7 @@
     <script type="text/javascript" src="./js/jquery-ui-1.9.0.custom.min.js"></script>
     <script type="text/javascript" src="./js/jquery-ui-timepicker-addon.js"></script>    
     <script type="text/javascript" src="./js/webinos.js"></script>
+    <script type="text/javascript" src="./js/globals.js"></script>
     <script type="text/javascript" src="./js/storereminders.js"></script>   
     <script type="text/javascript" src="./js/geoTools.js"></script>         
     <script type="text/javascript" src="./js/viewreminders.js"></script>    
@@ -30,6 +31,7 @@
     </div>
     <div id="morecontent">
         <div id="editDiv" style="display:none;">
+            <hr />
             <h1 id="editHeading">Add Reminder</h1>
             <table id="editTable">
                 <tr>
@@ -40,8 +42,8 @@
                     <td>When?</td>
                     <td>
                     <select id="dateSelect">
-                        <option val="any">Any time</option>
-                        <option val="select">Select a time</option>
+                        <option value="anytime">Any time</option>
+                        <option value="selecttime">Select a time</option>
                     </select>
                     <div style="display:none;" id="dateWrapper">
                         <div id="datepicker"></div>
@@ -84,7 +86,10 @@
                 </tr>
                 <tr style="display:none;" id="placeAddRow2">
                     <td>Select location</td>
-                    <td><div style="width:300pt; height:300pt" id="editPlaceLocationSelect"></div></td>
+                    <td>
+                        <div style="width:300pt; height:300pt" id="editPlaceLocationSelect">
+                        </div>
+                    </td>
                 </tr>
             </table>
             <button id="saveReminderButton" class="frontbutton" type="button">
@@ -92,6 +97,7 @@
             </button>
         </div>
         <div id="viewDiv" style="display:none;">
+            <hr />
             <h1>Reminders</h1>
             <table id="viewTable" class="reminderTable">
                 <tr><th>Description</th><th>When?</th><th>Where?</th></tr>       

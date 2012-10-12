@@ -1,5 +1,5 @@
-var geoOnce = false;
-var geoService = null;
+/* This file uses globals.  Read the globals.js to check which ones */
+
 function geoFind(successcb, errorcb) {
     webinos.discovery.findServices(
         new ServiceType('http://www.w3.org/ns/api-perms/geolocation'), 

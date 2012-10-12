@@ -1,8 +1,4 @@
-
-var REMINDER_DIV_ID = "reminderDiv";
-var PLACES_DIV_ID = "placesDiv";
-var MAP_IMG_ID = "imgmap"
-var MAP_DIV_ID = "map"
+/* This file uses globals.  Read the globals.js to check which ones */
 
 function getRemindersPage() {
 	var table = $('#viewTable');

@@ -1,15 +1,14 @@
-/* Store reminders */
-
-var STORE_DIRECTORY = "proximityreminder";
-var REMINDER_DIRECTORY = "reminders";
-var PLACE_DIRECTORY = "places";
-var fileService = null;
-var fileSystem = null;
+/* This file uses globals.  Read the globals.js to check which ones */
 
 /* use the FileAPI to save a reminder to disk. */
 function saveReminder(reminder, successcb, errorcb) {
 
 }
+
+function savePlace(place, successcb, errorcb) {
+
+}
+
 
 /* get all reminders from disk.  At the moment I'm not going to try and
    do anything more complicated than this. */
