@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html>
-<head profile="http://www.w3.org/2005/10/profile">
+<head>
     <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
     <title>Proximity Reminder</title>
     <script type="text/javascript" src="./js/jquery-1.8.2.js"></script>
@@ -13,6 +13,7 @@
     <script type="text/javascript" src="./js/viewreminders.js"></script>    
     <script type="text/javascript" src="./js/editreminder.js"></script>    
     <script type="text/javascript" src="./js/main.js"></script>    
+
     <link rel="stylesheet" type="text/css" href="./css/proximityreminder.css" />
     <link rel="stylesheet" type="text/css" href="./css/jquery-ui-1.9.0.custom.css" />
     <link rel="stylesheet" type="text/css" href="./css/jquery-ui-timepicker-addon.css" />
@@ -33,7 +34,10 @@
         <div id="editDiv" style="display:none;">
             <hr />
             <h1 id="editHeading">Add Reminder</h1>
-            <table id="editTable">
+            <table id="editTable" class="editTable">
+                <tr style="display:none;">
+                    <td>Reminder Id</td><td id="reminderIdCell"></td>
+                </tr>
                 <tr>
                     <td>Description</td>
                     <td><input id="editDescription" type="text"></input></td>
@@ -42,18 +46,18 @@
                     <td>When?</td>
                     <td>
                     <select id="dateSelect">
-                        <option value="anytime">Any time</option>
-                        <option value="selecttime">Select a time</option>
+                        <option class="persistentOption" value="anytime">Any time</option>
+                        <option class="persistentOption" value="selecttime">Select a time</option>
                     </select>
                     <div style="display:none;" id="dateWrapper">
                         <div id="datepicker"></div>
                         Reccurring: 
                         <select id="recurringSelect">
-                            <option value="never" selected="true">Never</option>
-                            <option value="daily" >Daily</option>
-                            <option value="weekly">Weekly</option>
-                            <option value="monthly">Monthly</option>
-                            <option value="yearly">Yearly</option>
+                            <option id="recurringOption-never" value="never" selected="true">Never</option>
+                            <option id="recurringOption-daily" value="daily" >Daily</option>
+                            <option id="recurringOption-weekly" value="weekly">Weekly</option>
+                            <option id="recurringOption-monthly" value="monthly">Monthly</option>
+                            <option id="recurringOption-yearly" value="yearly">Yearly</option>
                         </select>
                     </div>
                     </td>
@@ -62,12 +66,12 @@
                     <td>Where?</td>
                     <td>
                         <select id="placeSelect">
-                        <option value="_ANYWHERE" selected="true" id="place-option-_ANYWHERE">
+                        <option value="_ANYWHERE" class="persistentOption" id="place-option-_ANYWHERE">
                             Anywhere
                         </option>
-                        <select>
+                        </select>
                         <div id="proximityDiv" style="display:none;">
-                            - within <input id="proximityAmount" type="text" value="10" width="50px"></input> 
+                            Within <input id="proximityAmount" type="text" value="10" width="50px" /> 
                             <select id="proximityUnits">
                                 <option selected="true" value="metres">metres</option>
                                 <!--
@@ -82,7 +86,7 @@
                 </tr>
                 <tr style="display:none;" id="placeAddRow1">
                     <td>Place description</td>
-                    <td><input id="editPlaceDescription" type="text"></input></td>
+                    <td><input id="editPlaceDescription" type="text"/> </td>
                 </tr>
                 <tr style="display:none;" id="placeAddRow2">
                     <td>Select location</td>
@@ -100,7 +104,7 @@
             <hr />
             <h1>Reminders</h1>
             <table id="viewTable" class="reminderTable">
-                <tr><th>Description</th><th>When?</th><th>Where?</th></tr>       
+                      
             </table>      
             <h1>Places</h1>
   

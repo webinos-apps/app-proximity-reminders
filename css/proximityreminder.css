@@ -18,6 +18,10 @@
     width: 100%;
 }
 
+.reminderTable th {
+    text-align:left;
+}
+
 .selectedPlace {
 	background-color: yellow;
 	color: red;
@@ -27,4 +31,12 @@
     display:none;
 }
 
+.editTable {
+    border-collapse: collapse;
+}
+
+.editTable td {
+    border: 1px solid #CCC;
+	padding: 5px 5px 5px 5px;
+}
 
