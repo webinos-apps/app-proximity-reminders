@@ -7,6 +7,8 @@ To make the application into a widget, simply zip the contents of the
 repository.  You can also (for convenience) use the included createwgt.sh
 shell script.
 
+Warning: at present this doesn't work on Chrome because Chrome doesn't support
+the FileAPI if you are using it from a file.
 
 License
 =======
