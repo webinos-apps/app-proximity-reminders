@@ -1,25 +1,6 @@
 /* Find Reminders functions */
 
-function findReminderById(reminderList, id) {
+function findValidReminder(date, location, reminderList) {
 
 }
 
-function findReminderByPlaceId(reminderList, placeid) {
-
-}
-
-function findReminderByDate(reminderList, date) {
-
-}
-
-function findReminderByDescription(reminderList, description) {
-
-}
-
-function findPlaceByLocation(placeList, coordinates, proximity) {
-
-}
-
-function findPlaceByDescription(placeList, description) {
-
-}

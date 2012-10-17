@@ -161,12 +161,21 @@ function reminderFileToObject(places, fs, reminderFile, successcb, errorcb) {
                 console.log("Reminder : " + JSON.stringify(reminder) + " has place " + places[reminder.where[i].place]);
             }
         }
-        for (i = 0; i < reminder.when.length; i++) {
-            if (reminder.when[i].date !== undefined) {
-                reminder.when[i].date = new Date(reminder.when[i].date);
-                console.log("Reminder : " + reminder.description + " has date " + reminder.when[i].date);
-            }
+
+        if (reminder.when.startdate !== undefined) {
+            reminder.when.startdate = new Date(reminder.when.startdate);
+            console.log("Reminder : " + reminder.description + " has start date " + reminder.when.startdate);
         }
+        if (reminder.when.enddate !== undefined) {
+            reminder.when.enddate = new Date(reminder.when.enddate);
+            console.log("Reminder : " + reminder.description + " has end date " + reminder.when.enddate);
+        }
+
+        
+        if (reminder.enabled === undefined) {
+            reminder.enabled = true;
+        }
+        
 
         successcb(reminder);
     }, errorcb);

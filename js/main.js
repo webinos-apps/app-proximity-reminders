@@ -37,6 +37,18 @@ function loadApp() {
     });
 }
 
+function startTicker() {
+    reminderInterval = setInterval(function() { 
+        doReminders(reminders);
+    }, 5000);  
+}
+
+function doReminders(rems) {
+    //TODO: work out if there are any reminders to trigger
+    //      then trigger them and set 'enabled' to false.
+    //
+}
+
 
 function hideAddPage() {
     if ($("#" + EDIT_DIV_ID).length > 0) {

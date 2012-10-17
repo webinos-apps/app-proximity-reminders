@@ -29,10 +29,10 @@ function createAddObjects() {
     } else {
         add.reminder.id = $('#reminderIdCell').text();
     }
-
+    add.reminder.enabled = ($('#editEnabled').prop('checked') === true);
     add.reminder.description = $('#editDescription').val();
-    add.reminder.when = [];
-    add.reminder.when.push(getEditWhen());
+    add.reminder.when = {};
+    add.reminder.when = getEditWhen();
     add.reminder.where = [];
     add.reminder.where.push(getEditWhere(add.place));
     return add;
@@ -82,12 +82,16 @@ function getEditWhere(place) {
 
 function getEditWhen() {
     if ($("#dateSelect").val() !== 'anytime') {
-        var dateSelected = $("#datepicker").datepicker("getDate");
+        var dateEnd = $("#datepicker2").datepicker("getDate");
+        var dateStart = $("#datepicker").datepicker("getDate");
         var recurr = $('#recurringSelect').val();
+        
         return {
-            date: dateSelected,
+            startdate: dateStart,
+            enddate: dateEnd,
             recurring: recurr
         };
+        
     } else {
         return "anytime";
     }
@@ -140,6 +144,8 @@ function dateTimeSelect() {
         $('#dateWrapper').hide();
     }
 }
+
+
 
 function mapLoadedCallback() {
 
@@ -214,10 +220,16 @@ function showProximityField(reminder) {
 
 
 function setEditFields(reminder) {
+    setEditEnabled(reminder);
     setEditDescription(reminder);
     setEditDateFields(reminder);
     setEditPlaceFields(reminder);
     $("#saveReminderButton").click(saveEditReminder);
+}
+
+function setEditEnabled(reminder) {
+    $('#editEnabled').prop('checked', (reminder === undefined || reminder.enabled === undefined || 
+        reminder.enabled));    
 }
 
 function setEditDescription(reminder) {
@@ -275,38 +287,79 @@ function setEditDateFields(reminder) {
     //Remove a date picker
 
 
-    var dtOptions = {
+    var dtOptionsStart = {
         controlType: 'select',
-        ampm: true
+        ampm: true,
+        onClose : function(dateText, inst) {
+            if ($("#datepicker2").val() !== '') {
+			    var testStartDate = $("#datepicker").datetimepicker('getDate');
+			    var testEndDate = $("#datepicker2").datetimepicker('getDate');
+			    if (testStartDate > testEndDate)
+				    $("#datepicker2").datetimepicker('setDate', testStartDate);
+		    }
+		    else {
+			    $("#datepicker2").val(dateText);
+		    }
+        },
+        onSelect: function(startDateText, inst) {
+            $("#datepicker2").datetimepicker('option', 'minDate', $("#datepicker").datetimepicker('getDate') );
+        }
+    };
+    
+    var dtOptionsEnd = {
+        controlType: 'select',
+        ampm: true,
+        onClose : function(dateText, inst) {
+            if ($("#datepicker").val() !== '') {
+			    var testStartDate = $("#datepicker").datetimepicker('getDate');
+			    var testEndDate = $("#datepicker2").datetimepicker('getDate');
+			    if (testStartDate > testEndDate)
+				    $("#datepicker2").datetimepicker('setDate', testStartDate);
+		    }
+		    else {
+			    $("#datepicker").val(dateText);
+		    }
+        },
+        onSelect: function(startDateText, inst) {
+            $("#datepicker").datetimepicker('option', 'maxDate', $("#datepicker2").datetimepicker('getDate') );
+        }
     };
 
     if (reminder !== undefined) {
-        if (reminder.when !== null && reminder.when[0] !== null && reminder.when[0].date !== undefined) {
-            var currOption = $("<option id='_DATE_CURRENT' value='_DATE_CURRENT'>" + reminder.when[0].date.toString() + "</option>");
+        if (reminder.when !== undefined && reminder.when.startdate !== undefined && reminder.when.enddate !== undefined) {
+            var currOption = $("<option id='_DATE_CURRENT' value='_DATE_CURRENT'>" + 
+                reminder.when.startdate.toString() + "</option>");
+                
             currOption.attr('selected', true);
             $("#dateSelect").append(currOption);
-            $("#dateSelect").val(reminder.when[0].date.toString());
+            $("#dateSelect").val(reminder.when.startdate.toString());
             $("#_DATE_CURRENT").attr('selected', true);
 
-            $("#datepicker").datetimepicker(dtOptions);
-            $("#datepicker").datetimepicker("setDate", reminder.when[0].date);
+            $("#datepicker").datetimepicker(dtOptionsStart);
+            $("#datepicker").datetimepicker("setDate", reminder.when.startdate);
+            
+            $("#datepicker2").datetimepicker(dtOptionsEnd);
+            $("#datepicker2").datetimepicker("setDate", reminder.when.enddate);
+            
 
-            if (reminder.when[0].recurring !== null) {
-                $("#recurringSelect").val(reminder.when[0].recurring);
-                $("#recurringOption-" + reminder.when[0].recurring).attr('selected', true);
-                $("#recurringOption-" + reminder.when[0].recurring).selected = true;
+            if (reminder.when.recurring !== null) {
+                $("#recurringSelect").val(reminder.when.recurring);
+                $("#recurringOption-" + reminder.when.recurring).attr('selected', true);
+                $("#recurringOption-" + reminder.when.recurring).selected = true;
                 $("#dateWrapper").show();
             }
             dateTimeSelect();
         } else {
             $("#recurringSelect option:selected").attr("selected", false);
-            $("#datepicker").datetimepicker(dtOptions);
+            $("#datepicker").datetimepicker(dtOptionsStart);
+            $("#datepicker2").datetimepicker(dtOptionsEnd);
             //$("#datepicker").datetimepicker("setDate", Date.now());
             dateTimeSelect();
         }
     } else {
         //create a date picker
-        $("#datepicker").datetimepicker(dtOptions);
+        $("#datepicker").datetimepicker(dtOptionsStart);
+        $("#datepicker2").datetimepicker(dtOptionsEnd);
         //$("#datepicker").datetimepicker("setDate", Date.now());
         //set the recurrance back to normal
         $("#recurringSelect option:selected").attr("selected", false);

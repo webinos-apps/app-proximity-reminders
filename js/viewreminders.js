@@ -12,7 +12,18 @@ function getRemindersPage() {
 }
 
 function getReminderHeaderRow() {
-    return $("<tr><th>Description</th><th>Time</th><th>Date</th><th>Recurring?</th><th>Where?</th><th></th><th></th></tr>");
+    return $("<tr>" + 
+                "<th>Description</th>" + 
+                "<th>Start time</th>" + 
+                "<th>Start date</th>" + 
+                "<th>End time</th>" + 
+                "<th>End date</th>" + 
+                "<th>Recurring?</th>" + 
+                "<th>Where?</th>" + 
+                "<th>Enabled</th>" + 
+                "<th></th>" + 
+                "<th></th>" + 
+             "</tr>");
 }
 
 function highlightPlace() {
@@ -26,25 +37,38 @@ function getReminderRow(reminder) {
 
     var row = $('<tr></tr>');
     var desc = $('<td></td>').text(reminder.description);
-    var whenTime = $('<td></td>');
-    var whenDate = $('<td></td>');
+    var whenStartTime = $('<td></td>');
+    var whenStartDate = $('<td></td>');
+    var whenEndTime = $('<td></td>');
+    var whenEndDate = $('<td></td>');
+    
     var whenRecurring = $('<td></td>');
-    for (var i = 0; i < reminder.when.length; i++) {
-        if (reminder.when[i] !== undefined && reminder.when[i] !== "anytime") {
-            whenTime.append(reminder.when[i].date.toLocaleTimeString());
-            whenDate.append(reminder.when[i].date.toLocaleDateString());
-            whenRecurring.append(reminder.when[i].recurring);
-        } else {
-            whenTime.append("Any time");
-            whenDate.append("Any date");
-        }
+    if (reminder.when !== undefined && reminder.when !== "anytime" && reminder.when.startdate !== undefined && reminder.when.enddate !== undefined) {
+        whenStartTime.append(reminder.when.startdate.toLocaleTimeString());
+        whenStartDate.append(reminder.when.startdate.toLocaleDateString());
+        whenEndTime.append(reminder.when.enddate.toLocaleTimeString());
+        whenEndDate.append(reminder.when.enddate.toLocaleDateString());
+        whenRecurring.append(reminder.when.recurring);
+    } else {
+        whenStartTime.append("Any time");
+        whenStartDate.append("");
+        whenEndTime.append("");
+        whenEndDate.append("");        
     }
+
     var where = $('<td></td>');
     for (i = 0; i < where.length; i++) {
         where.append(getWhereLink(reminder.where[i]));
         if (reminder.where[i].proximity !== undefined) {
             where.append(" (within " + reminder.where[i].proximity.amount + " " + reminder.where[i].proximity.units + ") <br/>");
         }
+    }
+
+    var enabled = $('<td></td>');
+    if (reminder.enabled === undefined || reminder.enabled) { 
+        enabled.append("Yes"); 
+    } else {
+        enabled.append("No");
     }
 
     var editCell = $('<td></td>');
@@ -57,10 +81,13 @@ function getReminderRow(reminder) {
     deleteCell.append(deleteButton);
 
     row.append(desc);
-    row.append(whenTime);
-    row.append(whenDate);
+    row.append(whenStartTime);
+    row.append(whenStartDate);
+    row.append(whenEndTime);
+    row.append(whenEndDate);
     row.append(whenRecurring);
     row.append(where);
+    row.append(enabled);
     row.append(editCell);
     row.append(deleteCell);
 

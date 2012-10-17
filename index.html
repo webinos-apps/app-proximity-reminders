@@ -12,6 +12,7 @@
     <script type="text/javascript" src="./js/geoTools.js"></script>         
     <script type="text/javascript" src="./js/viewreminders.js"></script>    
     <script type="text/javascript" src="./js/editreminder.js"></script>    
+    <script type="text/javascript" src="./js/findreminders.js"></script>        
     <script type="text/javascript" src="./js/main.js"></script>    
 
     <link rel="stylesheet" type="text/css" href="./css/proximityreminder.css" />
@@ -21,6 +22,7 @@
 </head>
 <body>
 <div id="content">
+    <div id="reminderNotification" class="notificationDiv" style="display:none;"></div>
     <div id="frontpage">
         <button id="createReminder" class="frontbutton" type="button" disabled="true">
 			Create a reminder
@@ -39,6 +41,10 @@
                     <td>Reminder Id</td><td id="reminderIdCell"></td>
                 </tr>
                 <tr>
+                    <td>Enabled?</td>
+                    <td><input id="editEnabled" type="checkbox" value="true" defaultChecked="true"></input></td>
+                </tr>
+                <tr>
                     <td>Description</td>
                     <td><input id="editDescription" type="text"></input></td>
                 </tr>
@@ -50,7 +56,19 @@
                         <option class="persistentOption" value="selecttime">Select a time</option>
                     </select>
                     <div style="display:none;" id="dateWrapper">
-                        <div id="datepicker"></div>
+                        <table>
+                        <tr>
+                            <td>Start</td><td>End</td></tr>
+                        <tr>
+                            <td>
+                                <div id="datepicker"></div>
+                            </td>
+                            <td>
+                                <div id="datepicker2"></div>
+                            </td>
+                        </td>
+                        <br />                      
+                        </table>
                         Reccurring: 
                         <select id="recurringSelect">
                             <option id="recurringOption-never" value="never" selected="true">Never</option>

@@ -26,3 +26,7 @@ var editMap = null;
 // These are actually useful, although also due a refactor.
 var places;
 var reminders;
+
+// This is the reminder process that actually checks every second whether a 
+// notification should be shown.
+var reminderInterval;
