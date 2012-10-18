@@ -89,7 +89,11 @@ alerter.save = function(reminder) {
     var clonedReminder = rubbishClone(reminder);
     var detatchedClonedReminder = alerter.detatchReminderPlace(clonedReminder);
     //TODO: Enable this.
-    //storer.saveReminder(detatchedClonedReminder);
+    storer.saveReminder(detatchedClonedReminder, function() { 
+        console.log("Successfully set the reminder to 'disabled' after user clicks 'ok'");    
+    }, function(err) { 
+        console.log("Failed to set the reminder to 'disabled' after user clicks 'ok'");
+    });
     main.loadViewPage();
 }
 
