@@ -27,6 +27,12 @@
 	color: red;
 }
 
+.notSelectedPlace {
+	background-color: white;
+	color: black;
+}
+
+
 .hiddenDiv {
     display:none;
 }
@@ -40,11 +46,15 @@
 	padding: 5px 5px 5px 5px;
 }
 
-#notificationDiv {
+.notificationDiv {
     border: 2px solid red;
     font-size: 20px;
     padding: 10px 10px 10px 10px;
     font-weight:bold;
     background-color: yellow;
     color: red;
+}
+
+.placeLink a {
+    background-color: white;
 }

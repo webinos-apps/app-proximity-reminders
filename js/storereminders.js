@@ -1,20 +1,24 @@
 /* This file uses globals.  Read the globals.js to check which ones */
 
-function createReminderId() {
+var storer = {};
+storer.fileService = null;
+storer.fileSystem = null;
+
+
+storer.createReminderId = function() {
     return "reminder-" + Date.now();
 }
 
 /* use the FileAPI to save a reminder to disk. */
-function saveReminder(reminder, successcb, errorcb) {
+storer.saveReminder = function(reminder, successcb, errorcb) {
     //pre: the reminder's 'place' has been detatched
     console.log("Requested to save reminder: " + reminder.description);
-    getFileService(function (svc) {
-        getDirectories(fileService, function (fs, dirs) {
-            console.log("Saving reminder into dir: " + JSON.stringify(dirs.remindersdir));
+    storer.getFileService(function (svc) {
+        storer.getDirectories(storer.fileService, function (fs, dirs) {
             if (reminder.id === undefined || reminder.id === null) {
-                reminder.id = createReminderId();
+                reminder.id = storer.createReminderId();
             }
-            saveTextFile(dirs.remindersdir,
+            storer.saveTextFile(dirs.remindersdir,
             JSON.stringify(reminder),
             reminder.id + ".json",
             successcb,
@@ -30,17 +34,16 @@ function saveReminder(reminder, successcb, errorcb) {
 }
 
 
-function savePlace(place, successcb, errorcb) {
+storer.savePlace = function(place, successcb, errorcb) {
     if (place === null || place === "anywhere") {
         console.log("No need to add place: not real");
         successcb();
         return;
     }
     console.log("Requested to save place: " + place.description);
-    getFileService(function (svc) {
-        getDirectories(fileService, function (fs, dirs) {
-            console.log("Saving place into dir: " + JSON.stringify(dirs.placesdir));
-            saveTextFile(dirs.placesdir,
+    storer.getFileService(function (svc) {
+        storer.getDirectories(storer.fileService, function (fs, dirs) {
+            storer.saveTextFile(dirs.placesdir,
             JSON.stringify(place),
             place.id + ".json",
             successcb,
@@ -56,8 +59,7 @@ function savePlace(place, successcb, errorcb) {
 }
 
 
-function saveTextFile(dir, val, filename, successcb, errorcb) {
-    console.log("Saving text file: " + filename + " into directory " + JSON.stringify(dir));
+storer.saveTextFile = function(dir, val, filename, successcb, errorcb) {
     dir.getFile(filename, {
         create: true
     }, function (fileEntry) {
@@ -87,10 +89,10 @@ function saveTextFile(dir, val, filename, successcb, errorcb) {
 
 /* get all reminders from disk.  At the moment I'm not going to try and
    do anything more complicated than this. */
-function getAllData(successcb, errorcb) {
-    getFileService(function (svc) {
-        getDirectories(fileService, function (fs, dirs) {
-            getData(fileSystem, dirs, successcb, errorcb);
+storer.getAllData = function(successcb, errorcb) {
+    storer.getFileService(function (svc) {
+        storer.getDirectories(storer.fileService, function (fs, dirs) {
+            storer.getData(storer.fileSystem, dirs, successcb, errorcb);
         }, function (err) {
             console.log(err.code);
             errorcb(err);
@@ -101,12 +103,12 @@ function getAllData(successcb, errorcb) {
     });
 }
 
-function toArray(list) {
+storer.toArray = function(list) {
     return Array.prototype.slice.call(list || [], 0);
 }
 
 
-function fileToObject(fs, fileEntry, successcb, errorcb) {
+storer.fileToObject = function(fs, fileEntry, successcb, errorcb) {
     fileEntry.file(function (file) {
         var reader = new window.FileReader(fs);
         reader.onloadend = function (evt) {
@@ -121,10 +123,10 @@ function fileToObject(fs, fileEntry, successcb, errorcb) {
     }, errorcb);
 }
 
-function listOfFilesToObjects(fs, fileArray, converter, successcb, errorcb) {
+storer.listOfFilesToObjects = function(fs, fileArray, converter, successcb, errorcb) {
     if (fileArray.length > 0) {
         var currFile = fileArray.pop();
-        listOfFilesToObjects(fs, fileArray, converter, function (rest) {
+        storer.listOfFilesToObjects(fs, fileArray, converter, function (rest) {
             converter(fs, currFile, function (currObj) {
                 rest.push(currObj);
                 successcb(rest);
@@ -136,64 +138,71 @@ function listOfFilesToObjects(fs, fileArray, converter, successcb, errorcb) {
 }
 
 
-function placeFileToObject(fs, placeFile, successcb, errorcb) {
+storer.placeFileToObject = function(fs, placeFile, successcb, errorcb) {
     //console.log("Converting place file to object: " + placeFile.name);
     // TODO fix date
     // TODO validate input
 
-    fileToObject(fs, placeFile, successcb, errorcb);
+    storer.fileToObject(fs, placeFile, successcb, errorcb);
 }
 
-function getPlace(placeid, places) {
+storer.getPlace = function(placeid, places) {
     return places[placeid];
 }
 
-function reminderFileToObject(places, fs, reminderFile, successcb, errorcb) {
+storer.reminderFileToObject = function(places, fs, reminderFile, successcb, errorcb) {
     //console.log("Converting reminder file to object: " + reminderFile.name);
     // TODO fix date
     // TODO validate input
 
-    fileToObject(fs, reminderFile, function (reminder) {
+    storer.fileToObject(fs, reminderFile, function (reminder) {
         //link to the places file.		
         for (var i = 0; i < reminder.where.length; i++) {
             if (reminder.where[i].place !== undefined && reminder.where[i].place !== "anywhere") {
                 reminder.where[i].place = places[reminder.where[i].place];
-                console.log("Reminder : " + JSON.stringify(reminder) + " has place " + places[reminder.where[i].place]);
+                if (reminder.where[i].proximity === undefined || 
+                    reminder.where[i].proximity.amount === undefined || 
+                    reminder.where[i].proximity.units === undefined) {
+                    reminder.where[i].proximity = {
+                        amount : "10",
+                        units : "metres"
+                    }
+                }
             }
         }
 
         if (reminder.when.startdate !== undefined) {
             reminder.when.startdate = new Date(reminder.when.startdate);
-            console.log("Reminder : " + reminder.description + " has start date " + reminder.when.startdate);
         }
         if (reminder.when.enddate !== undefined) {
             reminder.when.enddate = new Date(reminder.when.enddate);
-            console.log("Reminder : " + reminder.description + " has end date " + reminder.when.enddate);
         }
 
         
         if (reminder.enabled === undefined) {
             reminder.enabled = true;
         }
+
         
 
         successcb(reminder);
     }, errorcb);
 }
 
-function processReminderFiles(fs, reminderFile, places, successcb, errorcb) {
+storer.processReminderFiles = function(fs, reminderFile, places, successcb, errorcb) {
     //console.log("Reading reminder files - " + reminderFile.length + " - in total");
-    listOfFilesToObjects(fs, reminderFile, function (fs, fileEntry, successcb, errorcb) {
-        reminderFileToObject(places, fs, fileEntry, successcb, errorcb);
+    storer.listOfFilesToObjects(fs, reminderFile, function (fs, fileEntry, successcb, errorcb) {
+        storer.reminderFileToObject(places, fs, fileEntry, successcb, errorcb);
     }, successcb, errorcb);
 }
 
-function processPlacesFiles(fs, placesFiles, successcb, errorcb) {
+storer.processPlacesFiles = function(fs, placesFiles, successcb, errorcb) {
     //console.log("Reading places files - " + placesFiles.length + " - in total");
-    listOfFilesToObjects(fs, placesFiles, placeFileToObject, successcb, errorcb);
+    storer.listOfFilesToObjects(fs, placesFiles, storer.placeFileToObject, 
+        successcb, errorcb);
 }
 
-function arrayToObject(arr, idfield) {
+storer.arrayToObject = function(arr, idfield) {
     var obj = {};
     for (var i = 0; i < arr.length; i++) {
         var key = arr[i][idfield];
@@ -203,15 +212,14 @@ function arrayToObject(arr, idfield) {
     return obj;
 }
 
-function getData(fs, dirs, successcb, errorcb) {
+storer.getData = function(fs, dirs, successcb, errorcb) {
     //console.log("Getting data from " + dirs.placesdir.name + " and " + dirs.remindersdir.name);
-    getFiles(fs, dirs.placesdir, function (placesFiles) {
-        processPlacesFiles(fs, placesFiles, function (placesArr) {
-            var places = arrayToObject(placesArr, "id");
-            //console.log("Places found : " + JSON.stringify(places));			
-            getFiles(fs, dirs.remindersdir, function (reminderFiles) {
-                processReminderFiles(fs, reminderFiles, places, function (remindersObj) {
-                    var reminders = arrayToObject(remindersObj, "id");
+    storer.getFiles(fs, dirs.placesdir, function (placesFiles) {
+        storer.processPlacesFiles(fs, placesFiles, function (placesArr) {
+            var places = storer.arrayToObject(placesArr, "id");
+            storer.getFiles(fs, dirs.remindersdir, function (reminderFiles) {
+                storer.processReminderFiles(fs, reminderFiles, places, function (remindersObj) {
+                    var reminders = storer.arrayToObject(remindersObj, "id");
                     successcb({
                         "reminders": reminders,
                         "places": places
@@ -222,8 +230,8 @@ function getData(fs, dirs, successcb, errorcb) {
     }, errorcb);
 }
 
-function getFiles(fs, dir, successcb, errorcb) {
-    getDirectoryContent(fs, dir, function (list) {
+storer.getFiles = function(fs, dir, successcb, errorcb) {
+    storer.getDirectoryContent(fs, dir, function (list) {
         var res = [];
         for (var i = 0; i < list.length; i++) {
             //console.log("Found directory entry: " + list[i].name);
@@ -236,7 +244,7 @@ function getFiles(fs, dir, successcb, errorcb) {
 }
 
 
-function getDirectoryContent(fs, dir, successcb, errorcb) {
+storer.getDirectoryContent = function(fs, dir, successcb, errorcb) {
     var dirReader = dir.createReader();
     var entries = [];
 
@@ -247,7 +255,7 @@ function getDirectoryContent(fs, dir, successcb, errorcb) {
                 successcb(entries.sort());
             } else {
                 //console.log("Adding directory entries");
-                entries = entries.concat(toArray(results));
+                entries = entries.concat(storer.toArray(results));
                 readEntries();
             }
         }, errorcb);
@@ -256,10 +264,8 @@ function getDirectoryContent(fs, dir, successcb, errorcb) {
     readEntries();
 }
 
-function getFileSystem(fileService, successcb, errorcb) {
-    console.log("get FileSystem");
-    if (fileSystem !== null) {
-        console.log("... already have FileSystem");
+storer.getFileSystem = function(fileService, successcb, errorcb) {
+    if (storer.fileSystem !== null) {
         successcb(fileSystem);
     } else {
         fileService.requestFileSystem(window.PERSISTENT, 5 * 1024 * 1024, successcb, errorcb);
@@ -267,24 +273,20 @@ function getFileSystem(fileService, successcb, errorcb) {
 }
 
 
-function getDirectories(fileService, successcb, errorcb) {
-    getFileSystem(fileService, onInitFs, fsErrorHandler);
+storer.getDirectories = function(fileService, successcb, errorcb) {
+    storer.getFileSystem(fileService, onInitFs, fsErrorHandler);
 
     function onInitFs(fs) {
         fileSystem = fs;
-        console.log("Got file system: " + fs.name);
         fs.root.getDirectory(STORE_DIRECTORY, {
             create: true
         }, function (approot) {
-            console.log("Got root directory: " + JSON.stringify(approot));
             approot.getDirectory(REMINDER_DIRECTORY, {
                 create: true
             }, function (reminders) {
-                console.log("Got reminder directory: " + JSON.stringify(reminders));
                 approot.getDirectory(PLACE_DIRECTORY, {
                     create: true
                 }, function (places) {
-                    console.log("Got places directory: " + JSON.stringify(places));
                     successcb(fs, {
                         "appdir": approot,
                         "remindersdir": reminders,
@@ -297,17 +299,15 @@ function getDirectories(fileService, successcb, errorcb) {
 
     function fsErrorHandler(err) {
         console.log("Failed to request file system");
-        errorHandler(err);
+        storer.errorHandler(err);
         errorcb(err);
     }
 }
 
 
-function getFileService(successcb, errorcb) {
-    console.log("get FileService");
-    if (fileService !== null) {
-        console.log("... already have FileService");
-        successcb(fileService);
+storer.getFileService = function(successcb, errorcb) {
+    if (storer.fileService !== null) {
+        successcb(storer.fileService);
         return;
     }
     var once = false;
@@ -321,7 +321,6 @@ function getFileService(successcb, errorcb) {
     }
 
     function on_service_found(service) {
-        console.log("found: " + service.serviceAddress);
         if (!once) {
             once = true;
             bind(service);
@@ -334,8 +333,7 @@ function getFileService(successcb, errorcb) {
     function bind(service) {
         service.bindService({
             onBind: function (boundService) {
-                console.log("Bound service: " + boundService.serviceAddress);
-                fileService = boundService;
+                storer.fileService = boundService;
                 successcb(boundService);
             }
         });
@@ -348,7 +346,7 @@ function getFileService(successcb, errorcb) {
 
 /* Shamelessly stolen from http://www.html5rocks.com/en/tutorials/file/filesystem/ */
 
-function errorHandler(e) {
+storer.errorHandler = function(e) {
     var msg = '';
 
     switch (e.code) {

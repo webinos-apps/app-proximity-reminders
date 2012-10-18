@@ -11,22 +11,6 @@ var VIEW_DIV_ID = "viewDiv";
 var EDIT_DIV_ID = "editDiv";
 
 
-// This I need to avoid reloading services.  Would be better as singletons
-// TODO: Refactor!
-var fileService = null;
-var fileSystem = null;
-var geoOnce = false;
-var geoService = null;
 
-var googleMapLoaded = false;
 
-//I need this to keep track of my Google Map location
-var editMap = null;
 
-// These are actually useful, although also due a refactor.
-var places;
-var reminders;
-
-// This is the reminder process that actually checks every second whether a 
-// notification should be shown.
-var reminderInterval;

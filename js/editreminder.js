@@ -1,12 +1,13 @@
-/* This file uses globals.  Read the globals.js to check which ones */
 
-function getEditPage(reminder) {
-    changeHeading(reminder);
-    setEditFields(reminder);
+var editor = {};
+editor.editMap = null;
+
+editor.getEditPage = function(reminders, places, reminder) {
+    editor.changeHeading(reminder);
+    editor.setEditFields(reminders, places, reminder);
 }
 
-
-function changeHeading(reminder) {
+editor.changeHeading = function(reminder) {
     var heading = $('#editHeading');
     if (reminder === undefined) {
         heading.text("Add Reminder");
@@ -16,37 +17,37 @@ function changeHeading(reminder) {
     }
 }
 
-function createAddObjects() {
+editor.createAddObjects = function(reminders, places) {
     var add = {
         isNew: ($('#editHeading').text() === "Add Reminder"),
         isNewPlace: ($('#placeSelect').val() === '_NEWPLACE'),
         reminder: {},
         place: null
     };
-    add.place = getEditPlace();
+    add.place = editor.getEditPlace(places);
     if (add.isNew) {
-        add.reminder.id = createReminderId();
+        add.reminder.id = storer.createReminderId();
     } else {
         add.reminder.id = $('#reminderIdCell').text();
     }
     add.reminder.enabled = ($('#editEnabled').prop('checked') === true);
     add.reminder.description = $('#editDescription').val();
     add.reminder.when = {};
-    add.reminder.when = getEditWhen();
+    add.reminder.when = editor.getEditWhen();
     add.reminder.where = [];
-    add.reminder.where.push(getEditWhere(add.place));
+    add.reminder.where.push(editor.getEditWhere(add.place));
     return add;
 }
 
-function getEditPlace() {
+editor.getEditPlace = function(places) {
     var place;
     if ($('#placeSelect').val() !== "_ANYWHERE") {
         place = {};
         if ($('#placeSelect').val() === '_NEWPLACE') {
-            place.id = getNewPlaceId();
+            place.id = editor.getNewPlaceId();
             place.datecreated = new Date();
             place.description = $('#editPlaceDescription').val();
-            var latlng = editMap.getCenter();
+            var latlng = editor.editMap.getCenter();
             place.coordinates = {
                 latitude: latlng.lat(),
                 longitude: latlng.lng()
@@ -60,12 +61,12 @@ function getEditPlace() {
     }
 }
 
-function getNewPlaceId() {
+editor.getNewPlaceId = function() {
     return "place-" + Date.now();
 }
 
 
-function getEditWhere(place) {
+editor.getEditWhere = function(place) {
     //pre: given a place with a valid id.
     if (place === null) {
         return "anywhere";
@@ -80,7 +81,7 @@ function getEditWhere(place) {
     }
 }
 
-function getEditWhen() {
+editor.getEditWhen = function() {
     if ($("#dateSelect").val() !== 'anytime') {
         var dateEnd = $("#datepicker2").datepicker("getDate");
         var dateStart = $("#datepicker").datepicker("getDate");
@@ -97,37 +98,35 @@ function getEditWhen() {
     }
 }
 
-function isPlace(place) {
+editor.isPlace = function(place) {
     return !(place === null || place === "anywhere");
 }
 
-function saveEditReminder() {
-    var add = createAddObjects();
-    //TODO: Sanity check input.
+editor.saveEditReminder = function(reminders, places) {
+    var add = editor.createAddObjects(reminders, places);
 
-    console.log("Adding: " + JSON.stringify(add));
+   console.log("Adding: " + JSON.stringify(add.reminder));  
+   console.log("Adding: " + JSON.stringify(add.place));  
 
-    savePlace(add.place, function () {
-        if (isPlace(add.place)) {
+   storer.savePlace(add.place, function () {
+        if (editor.isPlace(add.place)) {
             places[add.place.id] = add.place;
-            console.log("Added " + add.place.id);
+            console.log("Added " + add.place.id);            
         }
-        saveReminder(add.reminder, function () {
+        reminders[add.reminder.id] = add.reminder;
+       
+        storer.saveReminder(add.reminder, function () {
+            //re-attach place to reminder
+            if (editor.isPlace(add.place)) {
+                add.reminder.where[0].place = places[add.place.id];
+            }
             if (add.isNew) {
-                reminders[add.reminder.id] = add.reminder;
-                if (isPlace(add.place)) {
-                    add.reminder.where[0].place = places[add.place.id];
-                }
                 alert("New reminder saved: " + add.reminder.description);
             } else {
-                reminders[add.reminder.id] = add.reminder;
-                if (add.isNewPlace) {
-                    places[add.place.id] = add.place;
-                }
                 alert("Reminder saved: " + add.reminder.description);
             }
-            hideAddPage();
-            loadViewPage();
+            main.hideAddPage();
+            main.loadViewPage();
         }, function (err) {
             alert("Failed to add reminder: " + add.reminder.description);
         });
@@ -136,8 +135,7 @@ function saveEditReminder() {
     });
 }
 
-function dateTimeSelect() {
-    console.log($("#dateSelect").val());
+editor.dateTimeSelect = function() {
     if ($("#dateSelect").val() !== 'anytime') {
         $("#dateWrapper").show();
     } else {
@@ -149,23 +147,22 @@ function dateTimeSelect() {
 
 function mapLoadedCallback() {
 
-    geoGetCurrentPosition(function (position) {
+    geoTools.geoGetCurrentPosition(function (position) {
         var currentLocation = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
-        displayEditMap(currentLocation, 'editPlaceLocationSelect');
+        editor.displayEditMap(currentLocation, 'editPlaceLocationSelect');
     }, function (err) {
         var currentLocation = new google.maps.LatLng(-33.8665433, 151.1956316);
-        displayEditMap(currentLocation, 'editPlaceLocationSelect');
+        editor.displayEditMap(currentLocation, 'editPlaceLocationSelect');
     });
 
 }
 
-function loadEditGoogleMap() {
-    loadGoogleMapsScript("mapLoadedCallback");
+editor.loadEditGoogleMap = function() {
+    geoTools.loadGoogleMapsScript("mapLoadedCallback");
 }
 
-function displayEditMap(position, element) {
-    console.log("Displaying map at position " + JSON.stringify(position));
-    editMap = new google.maps.Map(document.getElementById(element), {
+editor.displayEditMap = function(position, element) {
+    editor.editMap = new google.maps.Map(document.getElementById(element), {
         mapTypeId: google.maps.MapTypeId.ROADMAP,
         center: position,
         zoom: 12
@@ -173,18 +170,17 @@ function displayEditMap(position, element) {
 }
 
 
-function placeSelect(reminder) {
+editor.placeSelect = function(reminder, places) {
     if ($("#placeSelect").val() === '_ANYWHERE') {
         $("#placeAddRow1").hide();
         $("#placeAddRow2").hide();
-        hideProximityField();
+        editor.hideProximityField();
     } else if ($("#placeSelect").val() === '_NEWPLACE') {
         $("#editPlaceDescription").val("");
         $("#editPlaceLocationSelect").html("");
 
-        loadEditGoogleMap();
-
-        showProximityField();
+        editor.loadEditGoogleMap();
+        editor.showProximityField();
 
         $("#placeAddRow1").show();
         $("#placeAddRow2").show();
@@ -192,24 +188,26 @@ function placeSelect(reminder) {
         var place = places[$("#placeSelect").val()];
         if (place !== null) {
             $("#editPlaceDescription").val(place.description);
-            $("#editPlaceLocationSelect").html(getGoogleMap(place.coordinates));
+            $("#editPlaceLocationSelect").html(viewer.getGoogleMap(place.coordinates));
         }
-
-        showProximityField(reminder);
-
+        editor.showProximityField(reminder);
         $("#placeAddRow1").show();
         $("#placeAddRow2").show();
     }
 }
 
-function hideProximityField() {
+editor.hideProximityField = function() {
     $('#proximityDiv').hide();
 }
 
-function showProximityField(reminder) {
+editor.showProximityField = function(reminder) {
     //HACK: Currently only works for single places.
     $('#proximityDiv').show();
-    if (reminder === undefined || reminder.where === undefined || reminder.where[0] === undefined || reminder.where[0].proximity === undefined || reminder.where[0].proximity.amount === undefined) {
+    if (reminder === undefined || 
+            reminder.where === undefined || 
+            reminder.where[0] === undefined || 
+            reminder.where[0].proximity === undefined || 
+            reminder.where[0].proximity.amount === undefined) {
         $('#proximityAmount').val("10");
     } else {
         $('#proximityAmount').val(reminder.where[0].proximity.amount);
@@ -219,20 +217,25 @@ function showProximityField(reminder) {
 
 
 
-function setEditFields(reminder) {
-    setEditEnabled(reminder);
-    setEditDescription(reminder);
-    setEditDateFields(reminder);
-    setEditPlaceFields(reminder);
-    $("#saveReminderButton").click(saveEditReminder);
+editor.setEditFields = function(reminders, places, reminder) {
+    editor.setEditEnabled(reminder);
+    editor.setEditDescription(reminder);
+    editor.setEditDateFields(reminder);
+    editor.setEditPlaceFields(places, reminder);
+    
+    $("#saveReminderButton").unbind("click");
+    $("#saveReminderButton").bind("click", function() {     
+        console.log("Clicked saveEditReminder");
+        editor.saveEditReminder(reminders, places);
+    });
 }
 
-function setEditEnabled(reminder) {
+editor.setEditEnabled = function(reminder) {
     $('#editEnabled').prop('checked', (reminder === undefined || reminder.enabled === undefined || 
         reminder.enabled));    
 }
 
-function setEditDescription(reminder) {
+editor.setEditDescription = function(reminder) {
     if (reminder !== undefined && reminder.description !== undefined) {
         $("#editDescription").val(reminder.description);
     } else {
@@ -240,7 +243,7 @@ function setEditDescription(reminder) {
     }
 }
 
-function setEditPlaceFields(reminder) {
+editor.setEditPlaceFields = function(places, reminder) {
     //remove all places
     $("#placeSelect option").filter(function () {
         return ($(this).attr("class") !== "persistentOption");
@@ -255,7 +258,10 @@ function setEditPlaceFields(reminder) {
     //add the 'new' option
     $("#placeSelect").append("<option value=\"_NEWPLACE\" id=\"place-option-_NEWPLACE\">Add a new location</option>");
 
-    $("#placeSelect").change(placeSelect);
+    $("#placeSelect").unbind("change");
+    $("#placeSelect").change(function() {
+        editor.placeSelect(reminder, places);
+    });
 
     if (reminder !== undefined && reminder.where !== null && reminder.where[0] !== null && reminder.where[0].place !== undefined) {
         $("#place-option-" + reminder.where[0].place.id).attr('selected', true);
@@ -265,19 +271,19 @@ function setEditPlaceFields(reminder) {
             $('#proximityAmount').val(reminder.where[0].proximity.amount);
             $('#proximityUnits').val(reminder.where[0].proximity.units);
         }
-        placeSelect();
+        editor.placeSelect(reminder, places);
     } else {
         $("#placeSelect").val("place-option-_ANYWHERE");
         $('#editPlaceDescription').val("anytime");
         $('#editPlaceLocationSelect').empty();
         $('#proximityAmount').val("10");
         $('#proximityUnits').val("metres");
-        placeSelect();
+        editor.placeSelect(reminder, places);
     }
 }
 
 
-function setEditDateFields(reminder) {
+editor.setEditDateFields = function(reminder) {
     //clear the select options
     $("#dateSelect option").filter(function () {
         return ($(this).attr("class") !== "persistentOption");
@@ -302,7 +308,8 @@ function setEditDateFields(reminder) {
 		    }
         },
         onSelect: function(startDateText, inst) {
-            $("#datepicker2").datetimepicker('option', 'minDate', $("#datepicker").datetimepicker('getDate') );
+            $("#datepicker2").datetimepicker('option', 'minDate', 
+                $("#datepicker").datetimepicker('getDate') );
         }
     };
     
@@ -321,7 +328,8 @@ function setEditDateFields(reminder) {
 		    }
         },
         onSelect: function(startDateText, inst) {
-            $("#datepicker").datetimepicker('option', 'maxDate', $("#datepicker2").datetimepicker('getDate') );
+            $("#datepicker").datetimepicker('option', 'maxDate', 
+                $("#datepicker2").datetimepicker('getDate') );
         }
     };
 
@@ -348,13 +356,13 @@ function setEditDateFields(reminder) {
                 $("#recurringOption-" + reminder.when.recurring).selected = true;
                 $("#dateWrapper").show();
             }
-            dateTimeSelect();
+            editor.dateTimeSelect();
         } else {
             $("#recurringSelect option:selected").attr("selected", false);
             $("#datepicker").datetimepicker(dtOptionsStart);
             $("#datepicker2").datetimepicker(dtOptionsEnd);
             //$("#datepicker").datetimepicker("setDate", Date.now());
-            dateTimeSelect();
+            editor.dateTimeSelect();
         }
     } else {
         //create a date picker
@@ -364,9 +372,9 @@ function setEditDateFields(reminder) {
         //set the recurrance back to normal
         $("#recurringSelect option:selected").attr("selected", false);
         $("#recurringSelect").val("");
-        dateTimeSelect();
+        editor.dateTimeSelect();
     }
 
-
-    $("#dateSelect").change(dateTimeSelect);
+    $("#dateSelect").unbind("change");
+    $("#dateSelect").change(editor.dateTimeSelect);
 }

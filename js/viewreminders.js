@@ -1,17 +1,17 @@
-/* This file uses globals.  Read the globals.js to check which ones */
+var viewer = {};
 
-function getRemindersPage() {
+
+viewer.getRemindersPage = function(reminders) {
     var table = $('#viewTable');
     table.empty();
-    table.append(getReminderHeaderRow());
+    table.append(viewer.getReminderHeaderRow());
     for (var r in reminders) {
-        var row = getReminderRow(reminders[r]);
-        console.log("Should be appending " + JSON.stringify(row) + " to the table");
+        var row = viewer.getReminderRow(reminders[r]);
         table.append(row);
     }
 }
 
-function getReminderHeaderRow() {
+viewer.getReminderHeaderRow = function() {
     return $("<tr>" + 
                 "<th>Description</th>" + 
                 "<th>Start time</th>" + 
@@ -26,14 +26,11 @@ function getReminderHeaderRow() {
              "</tr>");
 }
 
-function highlightPlace() {
-    var id = $(this).attr("id");
-    id = id.substring(id.indexOf("-") + 1, id.length);
-    showMapId(id);
+viewer.highlightPlace = function(place) {
+    viewer.showMapId(place);
 }
 
-function getReminderRow(reminder) {
-    console.log("Displaying " + JSON.stringify(reminder));
+viewer.getReminderRow = function(reminder) {
 
     var row = $('<tr></tr>');
     var desc = $('<td></td>').text(reminder.description);
@@ -58,7 +55,7 @@ function getReminderRow(reminder) {
 
     var where = $('<td></td>');
     for (i = 0; i < where.length; i++) {
-        where.append(getWhereLink(reminder.where[i]));
+        where.append(viewer.getWhereLink(reminder.where[i]));
         if (reminder.where[i].proximity !== undefined) {
             where.append(" (within " + reminder.where[i].proximity.amount + " " + reminder.where[i].proximity.units + ") <br/>");
         }
@@ -73,11 +70,17 @@ function getReminderRow(reminder) {
 
     var editCell = $('<td></td>');
     var editButton = $('<button id="editIndividualReminderButton-' + reminder.id + '" class="reminderButton" type="button">Edit</button>');
-    editButton.click(onEditIndividualButton);
+    editButton.unbind("click");
+    editButton.click(function() {
+        viewer.onEditIndividualButton(reminder);
+    });
     editCell.append(editButton);
     var deleteCell = $('<td></td>');
     var deleteButton = $('<button id="deleteIndividualReminderButton-' + reminder.id + '" class="reminderButton" type="button">Delete</button>');
-    deleteButton.click(onDeleteIndividualButton);
+    deleteButton.unbind("click");
+    deleteButton.click(function() {
+        viewer.onDeleteIndividualButton(reminder);
+    });
     deleteCell.append(deleteButton);
 
     row.append(desc);
@@ -94,27 +97,30 @@ function getReminderRow(reminder) {
     return row;
 }
 
-function onEditIndividualButton() {
-    hideViewPage();
-    var buttonid = $(this).attr("id");
-    var reminderId = buttonid.substr(buttonid.indexOf("-") + 1);
-    loadAddPage(reminders[reminderId]);
+viewer.onEditIndividualButton = function(reminder) {
+    main.hideViewPage();
+    //var buttonid = $(this).attr("id");
+    //var reminderId = buttonid.substr(buttonid.indexOf("-") + 1);
+    main.loadAddPage(reminder);
 }
 
-function onDeleteIndividualButton() {
-    var buttonid = $(this).attr("id");
-    var reminderId = buttonid.substr(buttonid.indexOf("-") + 1);
+viewer.onDeleteIndividualButton = function(reminder) {
+//    var buttonid = $(this).attr("id");
+//    var reminderId = buttonid.substr(buttonid.indexOf("-") + 1);
     alert("Click!");
 }
 
-function getWhereLink(whereObject) {
+viewer.getWhereLink = function(whereObject) {
     var whereLink;
     if (whereObject.place !== undefined) {
         whereLink = $('<a></a>');
         whereLink.attr('id', "linkto-" + whereObject.place.id);
         whereLink.attr('href', "#" + whereObject.place.id);
         whereLink.addClass("whereLink");
-        whereLink.click(highlightPlace);
+        whereLink.unbind("click");
+        whereLink.click(function() {
+            viewer.highlightPlace(whereObject.place);
+        });
         whereLink.text(whereObject.place.description);
     } else {
         whereLink = $("<span>Any location</span>");
@@ -122,7 +128,7 @@ function getWhereLink(whereObject) {
     return whereLink;
 }
 
-function getPlaces() {
+viewer.getPlaces = function(places) {
 
     var list = $('#placeUL');
     list.empty();
@@ -133,7 +139,11 @@ function getPlaces() {
         placeLink.text(places[p].description);
         placeLink.attr('id', "" + places[p].id);
         placeLink.attr('href', "#" + places[p].id);
-        placeLink.click(showMap);
+        placeLink.addClass("placeLink");
+        placeLink.unbind("click");
+        placeLink.click(function() {
+            viewer.showMapId(places[p]);
+        });
         placeItem.append(placeLink);
         list.append(placeItem);
     }
@@ -141,23 +151,22 @@ function getPlaces() {
     return list;
 }
 
-function showMapId(id) {
-    for (var p in places) {
-        if (places[p].id === id) {
-            $('#map').html(getGoogleMap(places[p].coordinates));
-            $('#' + id).addClass("selectedPlace");
-        } else {
-            $('#' + id).removeClass("selectedPlace");
-        }
-    }
+viewer.showMapId = function(place) {
+    $('#map').html(viewer.getGoogleMap(place.coordinates));
+    $('.placeLink').addClass("notSelectedPlace");
+    $('.placeLink').removeClass("selectedPlace");
+    
+    $('#' + place.id).addClass("selectedPlace");
+    $('#' + place.id).removeClass("notSelectedPlace");
+    
 }
 
-function showMap() {
+viewer.showMap = function() {
     var id = $(this).attr("id");
-    showMapId(id);
+    viewer.showMapId(id);
 }
 
-function getGoogleMap(coords) {
+viewer.getGoogleMap = function(coords) {
     var image_url = "http://maps.googleapis.com/maps/api/staticmap?" + "center=" + coords.latitude + "," + coords.longitude + "&zoom=12&size=400x400&sensor=false" + "&markers=color:blue|label:S|" + coords.latitude + ',' + coords.longitude;
     var gMap = $("<img />");
     gMap.attr("src", image_url).attr('id', MAP_IMG_ID);

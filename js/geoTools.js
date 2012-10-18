@@ -1,45 +1,51 @@
 /* This file uses globals.  Read the globals.js to check which ones */
 
-function geoFind(successcb, errorcb) {
+var geoTools = {};
+geoTools.geoOnce = false;
+geoTools.geoService = null;
+geoTools.googleMapLoaded = false;
+
+
+geoTools.geoFind = function(successcb, errorcb) {
     webinos.discovery.findServices(
         new ServiceType('http://www.w3.org/ns/api-perms/geolocation'), 
         { onFound: function(service) {
-            geoOnFound(service, successcb, errorcb);
+            geoTools.geoOnFound(service, successcb, errorcb);
         } }
     );
 }
-function geoOnFound(service, successcb, errorcb) {
+geoTools.geoOnFound = function(service, successcb, errorcb) {
    console.log("found: " + service.serviceAddress);
-   if (!geoOnce) {
-        geoOnce = true;
-        geoBind(service, successcb, errorcb);
+   if (!geoTools.geoOnce) {
+        geoTools.geoOnce = true;
+        geoTools.geoBind(service, successcb, errorcb);
    } else {
         console.log("Not bound : " + service.serviceAddress);                   
    }
 }
-function geoBind(service, successcb, errorcb) {
+geoTools.geoBind = function(service, successcb, errorcb) {
     service.bindService({onBind: function (boundService) {
             console.log("Bound service: " + boundService.serviceAddress);
             successcb(boundService);
         }
     }); 
 }
-function geoGetCurrentPositionFromService(service, successcb, errorcb) {
+geoTools.geoGetCurrentPositionFromService = function(service, successcb, errorcb) {
     service.getCurrentPosition(successcb, errorcb, {});
 }
 
-function geoGetCurrentPosition(successcb, errorcb) {
-    if (geoService === null) {
-        geoFind(function(svc) {
-            geoService = svc;
-            geoGetCurrentPosition(successcb, errorcb);
+geoTools.geoGetCurrentPosition = function(successcb, errorcb) {
+    if (geoTools.geoService === null) {
+        geoTools.geoFind(function(svc) {
+            geoTools.geoService = svc;
+            geoTools.geoGetCurrentPosition(successcb, errorcb);
         }, function(err) {
             console.log("Error finding or binding to location service: " + err);
             errorcb(err);            
         });
     
     } else {
-        geoGetCurrentPositionFromService(geoService, function(position) {
+        geoTools.geoGetCurrentPositionFromService(geoTools.geoService, function(position) {
             successcb(position);
         }, function(err) {
             console.log("Error calling location service: " + err);
@@ -49,13 +55,13 @@ function geoGetCurrentPosition(successcb, errorcb) {
 }
 
 
-function loadGoogleMapsScript(callbackname) {
-  if (!googleMapLoaded) {
+geoTools.loadGoogleMapsScript = function(callbackname) {
+  if (!geoTools.googleMapLoaded) {
       var script = document.createElement("script");
       script.type = "text/javascript";
       script.src = "http://maps.googleapis.com/maps/api/js?&sensor=false&callback=" + callbackname;
       document.body.appendChild(script);
-      googleMapLoaded = true;
+      geoTools.googleMapLoaded = true;
   }
 }
 

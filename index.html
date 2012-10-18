@@ -13,6 +13,7 @@
     <script type="text/javascript" src="./js/viewreminders.js"></script>    
     <script type="text/javascript" src="./js/editreminder.js"></script>    
     <script type="text/javascript" src="./js/findreminders.js"></script>        
+    <script type="text/javascript" src="./js/alertreminder.js"></script>    
     <script type="text/javascript" src="./js/main.js"></script>    
 
     <link rel="stylesheet" type="text/css" href="./css/proximityreminder.css" />
@@ -22,7 +23,9 @@
 </head>
 <body>
 <div id="content">
-    <div id="reminderNotification" class="notificationDiv" style="display:none;"></div>
+    <div id="reminderNotification" class="notificationDiv" style="display:none;">
+        
+    </div>
     <div id="frontpage">
         <button id="createReminder" class="frontbutton" type="button" disabled="true">
 			Create a reminder
@@ -31,6 +34,9 @@
         <button id="viewReminders" class="frontbutton" type="button"  disabled="true">
 			View reminders
 		</button>
+		<br />
+        <input id="checkReminders" type="checkbox" value="true" defaultChecked="true">Check reminders</input>
+		
     </div>
     <div id="morecontent">
         <div id="editDiv" style="display:none;">
