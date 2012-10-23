@@ -55,13 +55,15 @@ geoTools.geoGetCurrentPosition = function(successcb, errorcb) {
 }
 
 
-geoTools.loadGoogleMapsScript = function(callbackname) {
+geoTools.loadGoogleMapsScript = function(callbackname, callbackFn) {
   if (!geoTools.googleMapLoaded) {
       var script = document.createElement("script");
       script.type = "text/javascript";
       script.src = "http://maps.googleapis.com/maps/api/js?&sensor=false&callback=" + callbackname;
       document.body.appendChild(script);
       geoTools.googleMapLoaded = true;
+  } else {
+    callbackFn();
   }
 }
 

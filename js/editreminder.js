@@ -146,7 +146,7 @@ editor.dateTimeSelect = function() {
 
 
 function mapLoadedCallback() {
-
+    console.log("map loaded callback");
     geoTools.geoGetCurrentPosition(function (position) {
         var currentLocation = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
         editor.displayEditMap(currentLocation, 'editPlaceLocationSelect');
@@ -158,10 +158,11 @@ function mapLoadedCallback() {
 }
 
 editor.loadEditGoogleMap = function() {
-    geoTools.loadGoogleMapsScript("mapLoadedCallback");
+    geoTools.loadGoogleMapsScript("mapLoadedCallback", mapLoadedCallback);
 }
 
 editor.displayEditMap = function(position, element) {
+    console.log("displaying the edit map, with position: " + JSON.stringify(position));
     editor.editMap = new google.maps.Map(document.getElementById(element), {
         mapTypeId: google.maps.MapTypeId.ROADMAP,
         center: position,
