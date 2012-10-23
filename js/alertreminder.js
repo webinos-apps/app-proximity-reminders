@@ -66,23 +66,39 @@ alerter.showReminderAlert = function(reminder) {
     //TODO: Work with W3C Notifications ... not supported in Mozilla.
     $("#reminderNotification").show();
     if (reminder.showing === undefined || !reminder.showing) {    
+        if (typeof(window.Notification) !== undefined) {
+            var newNotif = new Notification("Reminder: " + reminder.description,
+            {iconUrl: "../remind_me.png",
+             tag: reminder.id,
+             onshow: function() {
+                alerter.close(reminder);
+             }
+             } 
+           );
+           newNotif.show();
+        }
         var reminderText = $("<p></p>");
         reminderText.attr("id", "alert-" + reminder.id );
         reminderText.append(reminder.description);
         var reminderButton = $("<button type='button'>Ok</button>");
         reminderText.append(reminderButton);
         reminderButton.bind('click', function() {
-            reminder.enabled = false;
-            delete reminder.showing;
-            if ($("#reminderNotification").children().size() === 1) {
-                $("#reminderNotification").hide();
-            }
-            alerter.save(reminder);
-            $("#alert-" + reminder.id).remove();
+            alerter.close(reminder);
         });
         $("#reminderNotification").append(reminderText);
         reminder.showing = true;
     }
+}
+
+alerter.close = function(reminder) {
+    console.log("Closing reminder " + JSON.stringify(reminder));
+    reminder.enabled = false;
+    delete reminder.showing;
+    if ($("#reminderNotification").children().size() === 1) {
+        $("#reminderNotification").hide();
+    }
+    alerter.save(reminder);
+    $("#alert-" + reminder.id).remove();
 }
 
 alerter.save = function(reminder) {
