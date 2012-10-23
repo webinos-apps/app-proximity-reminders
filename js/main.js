@@ -24,6 +24,14 @@ main.removeReminder = function(reminder) {
     alert("Reminder removed: " + reminder.description);    
 }
 
+main.removePlace = function(place) {
+    console.log("Removing place from the UI");
+    delete main.places[place.id];
+    main.loadViewPage();
+    alert("Place removed: " + place.description);    
+}
+
+
 main.makeEnabled = function() {
     $("#viewReminders").attr('disabled', false);
     $("#createReminder").attr('disabled', false);
@@ -80,7 +88,7 @@ main.loadViewPage = function() {
     $("#morecontent").append("<div id='" + VIEW_DIV_ID + "'></div>");
     var viewDiv = $("#" + VIEW_DIV_ID);
     viewer.getRemindersPage(main.reminders);
-    viewer.getPlaces(main.places);
+    viewer.getPlaces(main.places, main.reminders);
     viewDiv.show();
 }
 

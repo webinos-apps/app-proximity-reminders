@@ -58,3 +58,7 @@
 .placeLink a {
     background-color: white;
 }
+
+.filler span {
+    width:30px;
+}

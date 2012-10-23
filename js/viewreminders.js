@@ -134,27 +134,68 @@ viewer.getWhereLink = function(whereObject) {
     return whereLink;
 }
 
-viewer.getPlaces = function(places) {
+viewer.getPlaces = function(places, reminders) {
 
     var list = $('#placeUL');
     list.empty();
 
     for (var p in places) {
-        var placeItem = $('<li></li>');
-        var placeLink = $('<a></a>');
-        placeLink.text(places[p].description);
-        placeLink.attr('id', "placelist-link-" + places[p].id);
-        placeLink.attr('href', "#" + places[p].id);
-        placeLink.addClass("placeLink");
-        placeLink.unbind("click");
-        placeLink.on("click", null, places[p], function(evt) {
-            viewer.showMapId(evt.data);
-        });
-        placeItem.append(placeLink);
+        var placeItem = viewer.getPlaceListItem(places[p], reminders);
         list.append(placeItem);
     }
 
     return list;
+}
+
+viewer.getPlaceListItem = function(place, reminders) {
+    var placeItem = $('<li></li>');
+    var placeLink = $('<a></a>  ');
+    placeLink.text(place.description);
+    placeLink.attr('id', "placelist-link-" + place.id);
+    placeLink.attr('href', "#" + place.id);
+    placeLink.addClass("placeLink");
+    placeLink.unbind("click");
+    placeLink.on("click", null, place, function(evt) {
+        viewer.showMapId(evt.data);
+    });
+    
+    placeItem.append(placeLink);
+    
+    if (viewer.isOrphanPlace(place, reminders)) {
+        var placeDeleteButton = $('<button id="deletePlace-' + place.id + '" class="deletePlaceButton" type="button">Delete</button>');
+        placeDeleteButton.unbind("click");
+        placeDeleteButton.on("click", null, place, function(evt) {
+            viewer.deletePlace(evt.data);
+        });
+        placeItem.append($("<span class='filler' >&nbsp;</span>"));
+        placeItem.append(placeDeleteButton);
+    }
+    return placeItem;
+}
+
+viewer.isOrphanPlace = function(place, reminders) {
+    console.log("Called isOrphanPlace - " + JSON.stringify(reminders));
+    for (var r in reminders) {
+        if (reminders[r].where !== null && reminders[r].where.length > 0) {
+            for (var w in reminders[r].where) {
+                if (reminders[r].where[w] !== "anywhere") {
+                    if (reminders[r].where[w].place.id === place.id) {
+                        return false;
+                    }
+                }
+            }
+        }
+    }
+    return true;
+}
+
+viewer.deletePlace = function(place) {
+    storer.deletePlace(place, function() {
+        main.removePlace(place);
+    }, function(err) {
+        alert("Could not remove place: " + place.description);
+        console.log(err);
+    });
 }
 
 viewer.showMapId = function(place) {
