@@ -2,44 +2,45 @@ var viewer = {};
 
 
 viewer.getRemindersPage = function(reminders) {
-    var table = $('#viewTable');
-    table.empty();
-    table.append(viewer.getReminderHeaderRow());
+    var list = $('#viewList');
+    list.empty();
+//    list.append(viewer.getReminderHeaderRow());
     for (var r in reminders) {
-        var row = viewer.getReminderRow(reminders[r]);
-        table.append(row);
+        var listItem = viewer.getReminderItem(reminders[r]);
+        var listItemLi = $('<li></li>');
+        listItemLi.append(listItem);
+        list.append(listItemLi);
     }
-}
-
-viewer.getReminderHeaderRow = function() {
-    return $("<tr>" + 
-                "<th>Description</th>" + 
-                "<th>Start time</th>" + 
-                "<th>Start date</th>" + 
-                "<th>End time</th>" + 
-                "<th>End date</th>" + 
-                "<th>Recurring?</th>" + 
-                "<th>Where?</th>" + 
-                "<th>Enabled</th>" + 
-                "<th></th>" + 
-                "<th></th>" + 
-             "</tr>");
 }
 
 viewer.highlightPlace = function(place) {
     viewer.showMapId(place);
 }
 
-viewer.getReminderRow = function(reminder) {
+viewer.clickReminder = function(reminder) {
+    $('#reminderItemDetails-' + reminder.id).toggle();
+}
 
-    var row = $('<tr></tr>');
-    var desc = $('<td></td>').text(reminder.description);
-    var whenStartTime = $('<td></td>');
-    var whenStartDate = $('<td></td>');
-    var whenEndTime = $('<td></td>');
-    var whenEndDate = $('<td></td>');
+viewer.getReminderItem = function(reminder) {
+
+    var row = $('<div id="reminderView-' + reminder.id + '" class=\'reminderItem\'></div>');
+    var desc = $('<div class="reminderItemDescription" id="reminderItemDescription-' + reminder.id + '"></div>').text(reminder.description);
+    var rowDetails = $('<div id="reminderItemDetails-' + reminder.id + '"></div>');
     
-    var whenRecurring = $('<td></td>');
+    
+    
+    desc.unbind("click");
+    desc.on("click", null, reminder, function(evt) {
+       viewer.clickReminder(evt.data); 
+    });
+    
+     
+    var whenStartTime = $('<div class="reminderItemDetails reminderItemStartTime"></div>');
+    var whenStartDate = $('<div class="reminderItemDetails reminderItemStartDate"></div');
+    var whenEndTime = $('<div class="reminderItemDetails reminderItemEndTime"></div');
+    var whenEndDate = $('<div class="reminderItemDetails reminderItemEndDate"></div');
+    
+    var whenRecurring = $('<div class="reminderItemDetails reminderItemRecurring"></div');
     if (reminder.when !== undefined && reminder.when !== "anytime" && reminder.when.startdate !== undefined && reminder.when.enddate !== undefined) {
         whenStartTime.append(reminder.when.startdate.toLocaleTimeString());
         whenStartDate.append(reminder.when.startdate.toLocaleDateString());
@@ -53,7 +54,7 @@ viewer.getReminderRow = function(reminder) {
         whenEndDate.append("");        
     }
 
-    var where = $('<td></td>');
+    var where = $('<div class="reminderItemDetails reminderItemLocation"></div');
     for (i = 0; i < where.length; i++) {
         where.append(viewer.getWhereLink(reminder.where[i]));
         if (reminder.where[i].proximity !== undefined) {
@@ -61,21 +62,22 @@ viewer.getReminderRow = function(reminder) {
         }
     }
 
-    var enabled = $('<td></td>');
+    var enabled = $('<div class="reminderItemDetails reminderItemEnabled"></div>');
     if (reminder.enabled === undefined || reminder.enabled) { 
         enabled.append("Yes"); 
     } else {
         enabled.append("No");
+        row.addClass("disabledReminder");        
     }
 
-    var editCell = $('<td></td>');
+    var editCell = $('<div class="reminderItemEditCell"></div');
     var editButton = $('<button id="editIndividualReminderButton-' + reminder.id + '" class="reminderButton" type="button">Edit</button>');
     editButton.unbind("click");
     editButton.click(function() {
         viewer.onEditIndividualButton(reminder);
     });
     editCell.append(editButton);
-    var deleteCell = $('<td></td>');
+    var deleteCell = $('<div class="reminderItemDeleteCell"></div');
     var deleteButton = $('<button id="deleteIndividualReminderButton-' + reminder.id + '" class="reminderButton" type="button">Delete</button>');
     deleteButton.unbind("click");
     deleteButton.on("click", null, reminder, function(evt) {
@@ -84,16 +86,44 @@ viewer.getReminderRow = function(reminder) {
     deleteCell.append(deleteButton);
 
     row.append(desc);
-    row.append(whenStartTime);
-    row.append(whenStartDate);
-    row.append(whenEndTime);
-    row.append(whenEndDate);
-    row.append(whenRecurring);
-    row.append(where);
-    row.append(enabled);
-    row.append(editCell);
-    row.append(deleteCell);
+    row.append(rowDetails);
+    
+    
+    
+    var whenStartTimeTitle = $('<div class="reminderTitle">Start time:</div>');
+    whenStartTimeTitle.append(whenStartTime);
+    var whenStartDateTitle = $('<div class="reminderTitle">Start date:</div>');
+    whenStartDateTitle.append(whenStartDate);
+    var whenEndTimeTitle = $('<div class="reminderTitle">End time:</div>');
+    whenEndTimeTitle.append(whenEndTime);
+    var whenEndDateTitle = $('<div class="reminderTitle">End date:</div>');
+    whenEndDateTitle.append(whenEndDate);
+    var whenRecurringTitle = $('<div class="reminderTitle">Recurrs:</div>');
+    whenRecurringTitle.append(whenRecurring);
+    if (whenStartDate.text() !== "") {
+        rowDetails.append(whenStartTimeTitle);
+        rowDetails.append(whenStartDateTitle);
+        rowDetails.append(whenEndTimeTitle);
+        rowDetails.append(whenEndDateTitle);
+        rowDetails.append(whenRecurringTitle);
+    } else {
+        whenStartTimeTitle.text("Time: " + whenStartTime.text());
+        rowDetails.append(whenStartTimeTitle);
+    }
 
+    var whereTitle = $('<div class="reminderTitle">Location: </div>');
+    whereTitle.append(where);
+    var enabledTitle = $('<div class="reminderTitle">Enabled? </div>');
+    enabledTitle.append(enabled);
+    
+    
+    
+    rowDetails.append(whereTitle);
+    rowDetails.append(enabledTitle);
+    rowDetails.append(editCell);
+    rowDetails.append(deleteCell);
+    rowDetails.hide();
+    
     return row;
 }
 

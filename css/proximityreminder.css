@@ -62,3 +62,27 @@
 .filler span {
     width:30px;
 }
+
+.reminderTitle {
+    display: block;
+}
+
+.reminderItemDetails {
+    display: inline;
+}
+
+.reminderButton {
+    display: inline;
+}
+
+.reminderItemEditCell {
+    display: inline;
+}
+
+.reminderItemDeleteCell {
+    display: inline;
+}
+
+.disabledReminder {
+    color: grey;
+}
