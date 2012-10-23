@@ -1,5 +1,7 @@
 .frontbutton {
-    width: auto;
+    width: 150px;
+    display:block;
+    
 }
 
 .frontpage {
@@ -10,16 +12,6 @@
 	color: gray;
 	text-align: center;
 	padding-top: 20px;
-}
-
-.reminderTable {
-    border: 1px solid black;
-    padding: 5px;
-    width: 100%;
-}
-
-.reminderTable th {
-    text-align:left;
 }
 
 .selectedPlace {
@@ -61,6 +53,7 @@
 
 .filler span {
     width:30px;
+    display:inline;
 }
 
 .reminderTitle {
@@ -85,4 +78,69 @@
 
 .disabledReminder {
     color: grey;
+}
+
+body {
+   font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif; 
+   font-weight: 300;
+   font-size: 1em;  
+}
+
+h1 {
+   font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif; 
+   font-weight:bold;
+   font-size: 1.2em;
+}
+
+
+li.reminderListItem {
+   padding: 2px 2px 2px 2px;
+   display:block;
+   width:100%;
+}
+
+li.reminderListItem :hover {
+    background-color: #FFFF66;
+}
+
+li.reminderListItem a {
+    text-decoration: none;
+    width:100%;
+    display:block;
+}
+
+
+li.placeListItem {
+   padding: 2px 2px 2px 2px;
+   display:block;
+   width:100%;
+}
+
+li.placeListItem :hover {
+    background-color: #FFFF66;
+}
+
+li.placeListItem button {
+    display:inline;
+}
+
+li.placeListItem a {
+    text-decoration: none;
+    width:100%;
+    display:block;
+}
+
+
+
+
+ul#viewList {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+}
+
+ul#placeUL {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
 }

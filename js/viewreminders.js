@@ -7,7 +7,7 @@ viewer.getRemindersPage = function(reminders) {
 //    list.append(viewer.getReminderHeaderRow());
     for (var r in reminders) {
         var listItem = viewer.getReminderItem(reminders[r]);
-        var listItemLi = $('<li></li>');
+        var listItemLi = $('<li class="reminderListItem"></li>');
         listItemLi.append(listItem);
         list.append(listItemLi);
     }
@@ -24,7 +24,7 @@ viewer.clickReminder = function(reminder) {
 viewer.getReminderItem = function(reminder) {
 
     var row = $('<div id="reminderView-' + reminder.id + '" class=\'reminderItem\'></div>');
-    var desc = $('<div class="reminderItemDescription" id="reminderItemDescription-' + reminder.id + '"></div>').text(reminder.description);
+    var desc = $('<a href="#description-' + reminder.id + '" class="reminderItemDescription" id="reminderItemDescription-' + reminder.id + '"></a>').text(reminder.description);
     var rowDetails = $('<div id="reminderItemDetails-' + reminder.id + '"></div>');
     
     
@@ -178,7 +178,7 @@ viewer.getPlaces = function(places, reminders) {
 }
 
 viewer.getPlaceListItem = function(place, reminders) {
-    var placeItem = $('<li></li>');
+    var placeItem = $('<li class="placeListItem"></li>');
     var placeLink = $('<a></a>  ');
     placeLink.text(place.description);
     placeLink.attr('id', "placelist-link-" + place.id);
@@ -190,7 +190,7 @@ viewer.getPlaceListItem = function(place, reminders) {
     });
     
     placeItem.append(placeLink);
-    
+/*    
     if (viewer.isOrphanPlace(place, reminders)) {
         var placeDeleteButton = $('<button id="deletePlace-' + place.id + '" class="deletePlaceButton" type="button">Delete</button>');
         placeDeleteButton.unbind("click");
@@ -200,6 +200,7 @@ viewer.getPlaceListItem = function(place, reminders) {
         placeItem.append($("<span class='filler' >&nbsp;</span>"));
         placeItem.append(placeDeleteButton);
     }
+*/
     return placeItem;
 }
 
@@ -229,7 +230,22 @@ viewer.deletePlace = function(place) {
 }
 
 viewer.showMapId = function(place) {
+    
     $('#map').html(viewer.getGoogleMap(place.coordinates));
+    $('#mapImgWrapper').show();
+    $('#mapImgHeading').text(place.description);
+    
+    if (viewer.isOrphanPlace(place, main.reminders)) {
+        var placeDeleteButton = $('<button id="deletePlace-' + place.id + '" class="deletePlaceButton" type="button">Delete "' + place.description + '"</button>');
+        placeDeleteButton.unbind("click");
+        placeDeleteButton.on("click", null, place, function(evt) {
+            viewer.deletePlace(evt.data);
+        });
+        $('#mapImgDeleteButton').append(placeDeleteButton);
+    } else {
+        $('#mapImgDeleteButton').empty();
+    }
+    
     $('.placeLink').addClass("notSelectedPlace");
     $('.placeLink').removeClass("selectedPlace");
     
@@ -244,6 +260,7 @@ viewer.showMap = function() {
 }
 
 viewer.getGoogleMap = function(coords) {
+
     var image_url = "http://maps.googleapis.com/maps/api/staticmap?" + "center=" + coords.latitude + "," + coords.longitude + "&zoom=12&size=400x400&sensor=false" + "&markers=color:blue|label:S|" + coords.latitude + ',' + coords.longitude;
     var gMap = $("<img />");
     gMap.attr("src", image_url).attr('id', MAP_IMG_ID);

@@ -30,11 +30,9 @@
         <button id="createReminder" class="frontbutton" type="button" disabled="true">
 			Create a reminder
 		</button>
-		<br />
         <button id="viewReminders" class="frontbutton" type="button"  disabled="true">
 			View reminders
 		</button>
-		<br />
         <input id="checkReminders" type="checkbox" value="true" defaultChecked="true">Check reminders</input>
 		
     </div>
@@ -138,7 +136,11 @@
             <ul class="placeList" id="placeUL">
                 
             </ul>   
-            <div id="map"></div>
+            <div id="mapImgWrapper">
+                <h1 id="mapImgHeading"></h1>
+                <div id="mapImgDeleteButton"></div>
+                <div id="map"></div>
+            </div>
         </div>
     </div>
 	<hr />
