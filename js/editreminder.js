@@ -295,8 +295,8 @@ editor.setEditDateFields = function(reminder) {
 
 
     var dtOptionsStart = {
-        controlType: 'select',
-        ampm: true,
+//        controlType: 'select',
+//        ampm: true,
         onClose : function(dateText, inst) {
             if ($("#datepicker2").val() !== '') {
 			    var testStartDate = $("#datepicker").datetimepicker('getDate');
@@ -315,8 +315,8 @@ editor.setEditDateFields = function(reminder) {
     };
     
     var dtOptionsEnd = {
-        controlType: 'select',
-        ampm: true,
+//        controlType: 'select',
+//        ampm: true,
         onClose : function(dateText, inst) {
             if ($("#datepicker").val() !== '') {
 			    var testStartDate = $("#datepicker").datetimepicker('getDate');

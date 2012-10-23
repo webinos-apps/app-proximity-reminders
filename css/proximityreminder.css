@@ -1,3 +1,7 @@
+#appHeading {
+    text-align:center;
+}
+
 .frontbutton {
     width: 150px;
     display:block;
@@ -62,6 +66,7 @@
 
 .reminderItemDetails {
     display: inline;
+    padding-left: 5px;
 }
 
 .reminderButton {
@@ -129,6 +134,7 @@ li.placeListItem a {
     width:100%;
     display:block;
 }
+
 
 
 

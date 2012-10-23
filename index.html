@@ -6,6 +6,8 @@
     <script type="text/javascript" src="./js/jquery-1.8.2.js"></script>
     <script type="text/javascript" src="./js/jquery-ui-1.9.0.custom.min.js"></script>
     <script type="text/javascript" src="./js/jquery-ui-timepicker-addon.js"></script>    
+    <script type="text/javascript" src="./js/jquery-ui-sliderAccess.js"></script>
+    
     <script type="text/javascript" src="./js/webinos.js"></script>
     <script type="text/javascript" src="./js/globals.js"></script>
     <script type="text/javascript" src="./js/storereminders.js"></script>   
@@ -19,10 +21,12 @@
     <link rel="stylesheet" type="text/css" href="./css/proximityreminder.css" />
     <link rel="stylesheet" type="text/css" href="./css/jquery-ui-1.9.0.custom.css" />
     <link rel="stylesheet" type="text/css" href="./css/jquery-ui-timepicker-addon.css" />
+    
     <link rel="icon" type="image/png" href="./remind_me.png" />
 </head>
 <body>
 <div id="content">
+    <h1 class="appHeading">ProximityReminder</h1>
     <div id="reminderNotification" class="notificationDiv" style="display:none;">
         
     </div>
@@ -60,19 +64,9 @@
                         <option class="persistentOption" value="selecttime">Select a time</option>
                     </select>
                     <div style="display:none;" id="dateWrapper">
-                        <table>
-                        <tr>
-                            <td>Start</td><td>End</td></tr>
-                        <tr>
-                            <td>
-                                <div id="datepicker"></div>
-                            </td>
-                            <td>
-                                <div id="datepicker2"></div>
-                            </td>
-                        </td>
+                        Start: <input type="text" id="datepicker" /> <br/>
+                        End:   <input type="text" id="datepicker2" />
                         <br />                      
-                        </table>
                         <div id="recurringWrapper" style="display:none;" >
                         <!-- Not fully implemented yet -->
                         Reccurring: 
