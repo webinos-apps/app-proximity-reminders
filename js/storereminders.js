@@ -86,6 +86,69 @@ storer.saveTextFile = function(dir, val, filename, successcb, errorcb) {
     }, errorcb);
 }
 
+storer.deleteReminder = function(reminder, successcb, errorcb) {
+    console.log("Requested to delete reminder: " + reminder.description);
+    if (typeof(reminder.id) === undefined || reminder.id === null) {
+        errorcb("Invalid reminder: no reminder ID");
+        return;
+    }
+    
+    storer.getFileService(function (svc) {
+        storer.getDirectories(storer.fileService, function (fs, dirs) {
+            
+            storer.deleteFile(dirs.remindersdir,
+                reminder.id + ".json",
+                successcb,
+                errorcb);
+        }, function (err) {
+            console.log(err.code);
+            errorcb(err);
+        });
+    }, function (err) {
+        console.log(err.code);
+        errorcb(err);
+    }); 
+}
+
+storer.deletePlace = function(place, successcb, errorcb) {
+    //post: this wont update reminders with this place ID.  Sorry.
+    console.log("Requested to delete place: " + place.description);
+    if (typeof(place.id) === undefined || place.id === null) {
+        errorcb("Invalid place: no place ID");
+        return;
+    }
+    
+    storer.getFileService(function (svc) {
+        storer.getDirectories(storer.fileService, function (fs, dirs) {
+            
+            storer.deleteFile(dirs.placesdir,
+            place.id + ".json",
+            successcb,
+            errorcb);
+        }, function (err) {
+            console.log(err.code);
+            errorcb(err);
+        });
+    }, function (err) {
+        console.log(err.code);
+        errorcb(err);
+    }); 
+    
+}
+
+
+storer.deleteFile = function(dir, filename, successcb, errorcb) {
+
+    dir.getFile(filename, {create: false}, function(fileEntry) {
+
+        fileEntry.remove(function() {
+          console.log('File removed: ' + filename);
+          successcb();
+        }, errorcb);
+    }, errorcb);
+
+}
+
 
 /* get all reminders from disk.  At the moment I'm not going to try and
    do anything more complicated than this. */

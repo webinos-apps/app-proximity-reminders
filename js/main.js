@@ -17,6 +17,13 @@ main.refreshAllReminders = function() {
     });
 }
 
+main.removeReminder = function(reminder) {
+    console.log("Removing reminder from the UI");
+    delete main.reminders[reminder.id];
+    main.loadViewPage();
+    alert("Reminder removed: " + reminder.description);    
+}
+
 main.makeEnabled = function() {
     $("#viewReminders").attr('disabled', false);
     $("#createReminder").attr('disabled', false);

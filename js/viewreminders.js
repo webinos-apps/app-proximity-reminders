@@ -78,8 +78,8 @@ viewer.getReminderRow = function(reminder) {
     var deleteCell = $('<td></td>');
     var deleteButton = $('<button id="deleteIndividualReminderButton-' + reminder.id + '" class="reminderButton" type="button">Delete</button>');
     deleteButton.unbind("click");
-    deleteButton.click(function() {
-        viewer.onDeleteIndividualButton(reminder);
+    deleteButton.on("click", null, reminder, function(evt) {
+        viewer.onDeleteIndividualButton(evt.data);
     });
     deleteCell.append(deleteButton);
 
@@ -107,7 +107,13 @@ viewer.onEditIndividualButton = function(reminder) {
 viewer.onDeleteIndividualButton = function(reminder) {
 //    var buttonid = $(this).attr("id");
 //    var reminderId = buttonid.substr(buttonid.indexOf("-") + 1);
-    alert("Click!");
+    storer.deleteReminder(reminder, function() {
+        
+        main.removeReminder(reminder);
+    }, function(err) {
+        alert("Could not remove reminder: " + reminder.description);
+        console.log(err);
+    });
 }
 
 viewer.getWhereLink = function(whereObject) {
@@ -118,8 +124,8 @@ viewer.getWhereLink = function(whereObject) {
         whereLink.attr('href', "#" + whereObject.place.id);
         whereLink.addClass("whereLink");
         whereLink.unbind("click");
-        whereLink.click(function() {
-            viewer.highlightPlace(whereObject.place);
+        whereLink.on("click", null, whereObject.place, function(evt) {
+            viewer.highlightPlace(evt.data);
         });
         whereLink.text(whereObject.place.description);
     } else {
@@ -137,12 +143,12 @@ viewer.getPlaces = function(places) {
         var placeItem = $('<li></li>');
         var placeLink = $('<a></a>');
         placeLink.text(places[p].description);
-        placeLink.attr('id', "" + places[p].id);
+        placeLink.attr('id', "placelist-link-" + places[p].id);
         placeLink.attr('href', "#" + places[p].id);
         placeLink.addClass("placeLink");
         placeLink.unbind("click");
-        placeLink.click(function() {
-            viewer.showMapId(places[p]);
+        placeLink.on("click", null, places[p], function(evt) {
+            viewer.showMapId(evt.data);
         });
         placeItem.append(placeLink);
         list.append(placeItem);
@@ -156,8 +162,8 @@ viewer.showMapId = function(place) {
     $('.placeLink').addClass("notSelectedPlace");
     $('.placeLink').removeClass("selectedPlace");
     
-    $('#' + place.id).addClass("selectedPlace");
-    $('#' + place.id).removeClass("notSelectedPlace");
+    $('#placelist-link-' + place.id).addClass("selectedPlace");
+    $('#placelist-link-' + place.id).removeClass("notSelectedPlace");
     
 }
 
