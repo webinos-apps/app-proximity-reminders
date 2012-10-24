@@ -66,7 +66,7 @@ alerter.showReminderAlert = function(reminder) {
     //TODO: Work with W3C Notifications ... not supported in Mozilla.
     $("#reminderNotification").show();
     if (reminder.showing === undefined || !reminder.showing) {    
-        if (typeof(window.Notification) !== undefined) {
+        if (typeof(window.Notification) !== "undefined") {
             var newNotif = new Notification("Reminder: " + reminder.description,
             {iconUrl: "../remind_me.png",
              tag: reminder.id,
