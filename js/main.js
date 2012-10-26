@@ -21,14 +21,14 @@ main.removeReminder = function(reminder) {
     console.log("Removing reminder from the UI");
     delete main.reminders[reminder.id];
     main.loadViewPage();
-    alert("Reminder removed: " + reminder.description);    
+    alerter.jalert("Reminder removed: " + reminder.description);    
 }
 
 main.removePlace = function(place) {
     console.log("Removing place from the UI");
     delete main.places[place.id];
     main.loadViewPage();
-    alert("Place removed: " + place.description);    
+    alerter.jalert("Place removed: " + place.description);    
 }
 
 

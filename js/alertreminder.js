@@ -113,3 +113,18 @@ alerter.save = function(reminder) {
     main.loadViewPage();
 }
 
+alerter.jalert = function(text) {
+    $('#alertPopupDiv').text(text);
+    $('#alertPopupDiv').dialog(
+        {   
+            buttons: { 
+                Ok : function() {
+                    $(this).dialog("close");
+                }
+            },
+            dialogClass: "alert",
+            modal : true
+        }    
+    );
+}
+

@@ -121,17 +121,17 @@ editor.saveEditReminder = function(reminders, places) {
                 add.reminder.where[0].place = places[add.place.id];
             }
             if (add.isNew) {
-                alert("New reminder saved: " + add.reminder.description);
+                alerter.jalert("New reminder saved: " + add.reminder.description);
             } else {
-                alert("Reminder saved: " + add.reminder.description);
+                alerter.jalert("Reminder saved: " + add.reminder.description);
             }
             main.hideAddPage();
             main.loadViewPage();
         }, function (err) {
-            alert("Failed to add reminder: " + add.reminder.description);
+            alerter.jalert("Failed to add reminder: " + add.reminder.description);
         });
     }, function (err) {
-        alert("Failed to add place: " + add.place.description);
+        alerter.jalert("Failed to add place: " + add.place.description);
     });
 }
 

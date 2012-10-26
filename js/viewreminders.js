@@ -141,7 +141,7 @@ viewer.onDeleteIndividualButton = function(reminder) {
         
         main.removeReminder(reminder);
     }, function(err) {
-        alert("Could not remove reminder: " + reminder.description);
+        alerter.jalert("Could not remove reminder: " + reminder.description);
         console.log(err);
     });
 }
@@ -224,7 +224,7 @@ viewer.deletePlace = function(place) {
     storer.deletePlace(place, function() {
         main.removePlace(place);
     }, function(err) {
-        alert("Could not remove place: " + place.description);
+        alerter.jalert("Could not remove place: " + place.description);
         console.log(err);
     });
 }
