@@ -2,6 +2,8 @@
 var editor = {};
 editor.editMap = null;
 
+editor.serviceMap = {};
+
 editor.getEditPage = function(reminders, places, reminder) {
     editor.changeHeading(reminder);
     editor.setEditFields(reminders, places, reminder);
@@ -24,6 +26,8 @@ editor.createAddObjects = function(reminders, places) {
         reminder: {},
         place: null
     };
+    
+    
     add.place = editor.getEditPlace(places);
     if (add.isNew) {
         add.reminder.id = storer.createReminderId();
@@ -36,7 +40,21 @@ editor.createAddObjects = function(reminders, places) {
     add.reminder.when = editor.getEditWhen();
     add.reminder.where = [];
     add.reminder.where.push(editor.getEditWhere(add.place));
+    add.reminder.devices = editor.getEditDevices();    
+        
     return add;
+}
+
+editor.getEditDevices = function() {
+  var deviceList = [];
+  var serviceList = $("#devicesSelect").val() || [];
+  
+  for (var i=0;i<serviceList.length; i++) {
+      console.log("Looking for notification service : " + serviceList[i]);
+      deviceList.push(editor.serviceMap[serviceList[i]]);
+  }
+
+  return deviceList;
 }
 
 editor.getEditPlace = function(places) {
@@ -223,6 +241,7 @@ editor.setEditFields = function(reminders, places, reminder) {
     editor.setEditDescription(reminder);
     editor.setEditDateFields(reminder);
     editor.setEditPlaceFields(places, reminder);
+    editor.setEditDevicesFields(reminder);
     
     $("#saveReminderButton").unbind("click");
     $("#saveReminderButton").bind("click", function() {     
@@ -283,6 +302,43 @@ editor.setEditPlaceFields = function(places, reminder) {
     }
 }
 
+editor.setEditDevicesFields = function(reminder) {
+    //remove all services
+    $("#devicesSelect option").filter(function () {
+        return ($(this).attr("class") !== "persistentOption");
+    }).remove();  
+    
+    //add services that we know about already
+    if (reminder !== undefined && reminder.hasOwnProperty("devices") && reminder.devices !== null && Array.isArray(reminder.devices) && reminder.devices.length > 0) {
+      for (var i=0;i<reminder.devices.length; i++) {
+        $('#devicesSelect').append('<option id="deviceOpt-' + 
+            reminder.devices[i].id + '" value="' + reminder.devices[i].id + 
+            '" selected="true">' + reminder.devices[i].displayName + ' on ' + reminder.devices[i].serviceAddress + '</option>');
+        editor.addServiceToList(reminder.devices[i]);            
+      }
+    }
+    
+    //find all services again (this will load asynchronously - might be a problem)
+    webinos.discovery.findServices(
+      new ServiceType('http://webinos.org/api/webnotification'), 
+      { onFound: function(service) {
+          if ($('#deviceOpt-' + service.id).length === 0) {
+            $('#devicesSelect').append('<option id="deviceOpt-' + service.id + 
+              '" value="' + service.id + '" selected="false">' + 
+              service.displayName + ' on ' + service.serviceAddress + '</option>');
+          }
+          editor.addServiceToList(service);
+        } 
+      }
+    );
+}
+
+// we're storing service details so we can add them later.
+// I'm assuming services never change (it doesn't matter if they appear/disappear, but it would if their ID or values change)
+editor.addServiceToList = function(service) {
+  console.log("Adding a notification service: " + JSON.stringify(service));
+  editor.serviceMap[service.id] = service;
+}
 
 editor.setEditDateFields = function(reminder) {
     //clear the select options
@@ -295,8 +351,6 @@ editor.setEditDateFields = function(reminder) {
 
 
     var dtOptionsStart = {
-//        controlType: 'select',
-//        ampm: true,
         onClose : function(dateText, inst) {
             if ($("#datepicker2").val() !== '') {
 			    var testStartDate = $("#datepicker").datetimepicker('getDate');
@@ -315,8 +369,6 @@ editor.setEditDateFields = function(reminder) {
     };
     
     var dtOptionsEnd = {
-//        controlType: 'select',
-//        ampm: true,
         onClose : function(dateText, inst) {
             if ($("#datepicker").val() !== '') {
 			    var testStartDate = $("#datepicker").datetimepicker('getDate');
@@ -362,14 +414,12 @@ editor.setEditDateFields = function(reminder) {
             $("#recurringSelect option:selected").attr("selected", false);
             $("#datepicker").datetimepicker(dtOptionsStart);
             $("#datepicker2").datetimepicker(dtOptionsEnd);
-            //$("#datepicker").datetimepicker("setDate", Date.now());
             editor.dateTimeSelect();
         }
     } else {
         //create a date picker
         $("#datepicker").datetimepicker(dtOptionsStart);
         $("#datepicker2").datetimepicker(dtOptionsEnd);
-        //$("#datepicker").datetimepicker("setDate", Date.now());
         //set the recurrance back to normal
         $("#recurringSelect option:selected").attr("selected", false);
         $("#recurringSelect").val("");
