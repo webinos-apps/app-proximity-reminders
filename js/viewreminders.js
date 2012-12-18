@@ -1,10 +1,8 @@
 var viewer = {};
 
-
 viewer.getRemindersPage = function(reminders) {
     var list = $('#viewList');
     list.empty();
-//    list.append(viewer.getReminderHeaderRow());
     for (var r in reminders) {
         var listItem = viewer.getReminderItem(reminders[r]);
         var listItemLi = $('<li class="reminderListItem"></li>');
@@ -22,19 +20,15 @@ viewer.clickReminder = function(reminder) {
 }
 
 viewer.getReminderItem = function(reminder) {
-
     var row = $('<div id="reminderView-' + reminder.id + '" class=\'reminderItem\'></div>');
     var desc = $('<a href="#description-' + reminder.id + '" class="reminderItemDescription" id="reminderItemDescription-' + reminder.id + '"></a>').text(reminder.description);
     var rowDetails = $('<div id="reminderItemDetails-' + reminder.id + '"></div>');
-    
-    
     
     desc.unbind("click");
     desc.on("click", null, reminder, function(evt) {
        viewer.clickReminder(evt.data); 
     });
-    
-     
+         
     var whenStartTime = $('<div class="reminderItemDetails reminderItemStartTime"></div>');
     var whenStartDate = $('<div class="reminderItemDetails reminderItemStartDate"></div');
     var whenEndTime = $('<div class="reminderItemDetails reminderItemEndTime"></div');
@@ -55,7 +49,7 @@ viewer.getReminderItem = function(reminder) {
     }
 
     var where = $('<div class="reminderItemDetails reminderItemLocation"></div');
-    for (i = 0; i < where.length; i++) {
+    for (var i = 0; i < where.length; i++) {
         where.append(viewer.getWhereLink(reminder.where[i]));
         if (reminder.where[i].proximity !== undefined) {
             where.append(" (within " + reminder.where[i].proximity.amount + " " + reminder.where[i].proximity.units + ") <br/>");
@@ -68,6 +62,17 @@ viewer.getReminderItem = function(reminder) {
     } else {
         enabled.append("No");
         row.addClass("disabledReminder");        
+    }
+
+    var devicesToRemind = $('<div class="reminderItemDetails reminderItemDevices"></div>');
+    if (reminder.hasOwnProperty('devices') && reminder.devices !== undefined && Array.isArray(reminder.devices) && reminder.devices.length > 0) {
+      var deviceToRemindList = $('<ul></ul>');
+      for (var i=0; i< reminder.devices.length; i++) {
+        deviceToRemindList.append($('<li>' + reminder.devices[i].serviceAddress + '</li>'));
+      } 
+      devicesToRemind.append(deviceToRemindList);
+    } else {
+      devicesToRemind.append("All devices");
     }
 
     var editCell = $('<div class="reminderItemEditCell"></div');
@@ -87,8 +92,6 @@ viewer.getReminderItem = function(reminder) {
 
     row.append(desc);
     row.append(rowDetails);
-    
-    
     
     var whenStartTimeTitle = $('<div class="reminderTitle">Start time:</div>');
     whenStartTimeTitle.append(whenStartTime);
@@ -113,12 +116,15 @@ viewer.getReminderItem = function(reminder) {
 
     var whereTitle = $('<div class="reminderTitle">Location: </div>');
     whereTitle.append(where);
+    
+    var devicesTitle = $('<div class="reminderTitle">Devices to remind: </div>');
+    devicesTitle.append(devicesToRemind);
+    
     var enabledTitle = $('<div class="reminderTitle">Enabled? </div>');
     enabledTitle.append(enabled);
     
-    
-    
     rowDetails.append(whereTitle);
+    rowDetails.append(devicesTitle);    
     rowDetails.append(enabledTitle);
     rowDetails.append(editCell);
     rowDetails.append(deleteCell);
@@ -129,14 +135,10 @@ viewer.getReminderItem = function(reminder) {
 
 viewer.onEditIndividualButton = function(reminder) {
     main.hideViewPage();
-    //var buttonid = $(this).attr("id");
-    //var reminderId = buttonid.substr(buttonid.indexOf("-") + 1);
     main.loadAddPage(reminder);
 }
 
 viewer.onDeleteIndividualButton = function(reminder) {
-//    var buttonid = $(this).attr("id");
-//    var reminderId = buttonid.substr(buttonid.indexOf("-") + 1);
     storer.deleteReminder(reminder, function() {
         
         main.removeReminder(reminder);
@@ -165,15 +167,12 @@ viewer.getWhereLink = function(whereObject) {
 }
 
 viewer.getPlaces = function(places, reminders) {
-
     var list = $('#placeUL');
     list.empty();
-
     for (var p in places) {
         var placeItem = viewer.getPlaceListItem(places[p], reminders);
         list.append(placeItem);
     }
-
     return list;
 }
 
@@ -190,17 +189,6 @@ viewer.getPlaceListItem = function(place, reminders) {
     });
     
     placeItem.append(placeLink);
-/*    
-    if (viewer.isOrphanPlace(place, reminders)) {
-        var placeDeleteButton = $('<button id="deletePlace-' + place.id + '" class="deletePlaceButton" type="button">Delete</button>');
-        placeDeleteButton.unbind("click");
-        placeDeleteButton.on("click", null, place, function(evt) {
-            viewer.deletePlace(evt.data);
-        });
-        placeItem.append($("<span class='filler' >&nbsp;</span>"));
-        placeItem.append(placeDeleteButton);
-    }
-*/
     return placeItem;
 }
 
