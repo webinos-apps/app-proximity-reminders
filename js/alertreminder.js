@@ -62,30 +62,68 @@ alerter.detatchReminderPlace = function(reminder) {
     return reminder;
 }
 
+alerter.showBrowserNotification = function(reminder) {
+  if (typeof(window.Notification) !== "undefined") {
+      var newNotif = new Notification("Reminder: " + reminder.description,
+      {iconUrl: "../remind_me.png",
+       tag: reminder.id,
+       onshow: function() {
+          alerter.close(reminder);
+       }
+       } 
+     );
+     newNotif.show();
+  }
+}
+
+alerter.showHTMLNotification = function(reminder) {
+  var reminderText = $("<p></p>");
+  reminderText.attr("id", "alert-" + reminder.id );
+  reminderText.append(reminder.description);
+  var reminderButton = $("<button type='button'>Ok</button>");
+  reminderText.append(reminderButton);
+  reminderButton.bind('click', function() {
+      alerter.close(reminder);
+  });
+  $("#reminderNotification").append(reminderText);
+}
+
+alerter.showWebinosNotification = function(reminder) {
+  var useWebNotServ = function(service) {
+    new service.WebNotification("Reminder!", 
+      {body: reminder.description, iconUrl: "../remind_me.png"});
+		service.onClick = function () {
+		  console.log("reminder notification clicked");
+	  };
+		service.onClose = function (){
+		  console.log("reminder notification closed");
+		  alerter.close(reminder);
+	  };
+		service.onShow  = function (){
+		  console.log("reminder notification showed");
+	  }
+		service.onError = function (err){
+		  console.log("reminder notification error");
+	  };         
+  };
+  var foundWebNotServ = function(service) {
+    service.bindService({ onBind: useWebNotServ });
+      
+  };  
+  var findWebNotServ = function() {
+    webinos.discovery.findServices(
+      new ServiceType('http://webinos.org/api/webnotification'), 
+      { onFound: foundWebNotServ });
+  };
+  findWebNotServ();
+}
+
 alerter.showReminderAlert = function(reminder) {
-    //TODO: Work with W3C Notifications ... not supported in Mozilla.
     $("#reminderNotification").show();
     if (reminder.showing === undefined || !reminder.showing) {    
-        if (typeof(window.Notification) !== "undefined") {
-            var newNotif = new Notification("Reminder: " + reminder.description,
-            {iconUrl: "../remind_me.png",
-             tag: reminder.id,
-             onshow: function() {
-                alerter.close(reminder);
-             }
-             } 
-           );
-           newNotif.show();
-        }
-        var reminderText = $("<p></p>");
-        reminderText.attr("id", "alert-" + reminder.id );
-        reminderText.append(reminder.description);
-        var reminderButton = $("<button type='button'>Ok</button>");
-        reminderText.append(reminderButton);
-        reminderButton.bind('click', function() {
-            alerter.close(reminder);
-        });
-        $("#reminderNotification").append(reminderText);
+        alerter.showBrowserNotification(reminder);
+        alerter.showHTMLNotification(reminder);
+        alerter.showWebinosNotification(reminder);
         reminder.showing = true;
     }
 }
