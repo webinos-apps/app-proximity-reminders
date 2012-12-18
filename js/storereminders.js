@@ -13,6 +13,7 @@ storer.createReminderId = function() {
 storer.saveReminder = function(reminder, successcb, errorcb) {
     //pre: the reminder's 'place' has been detatched
     console.log("Requested to save reminder: " + reminder.description);
+    console.log("Reminder: " + JSON.stringify(reminder));
     storer.getFileService(function (svc) {
         storer.getDirectories(storer.fileService, function (fs, dirs) {
             if (reminder.id === undefined || reminder.id === null) {

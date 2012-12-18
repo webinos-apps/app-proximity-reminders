@@ -115,7 +115,24 @@ alerter.showWebinosNotification = function(reminder) {
       new ServiceType('http://webinos.org/api/webnotification'), 
       { onFound: foundWebNotServ });
   };
-  findWebNotServ();
+  
+  var findSpecificNotificiationService = function(serviceId) {
+    webinos.discovery.findServices(
+      new ServiceType('http://webinos.org/api/webnotification'), 
+      { onFound: foundWebNotServ }, null, 
+      {serviceID : serviceId }
+      );
+  }
+  
+  // trigger either a reminder to every device or a reminder to just those selected.
+  if (reminder.hasOwnProperty("devices") && reminder.devices !== undefined && Array.isArray(reminder.devices) && reminder.devices.length > 0) {
+    for (var i=0; i<reminder.devices.length; i++) {
+      console.log("Alerting: " + reminder.devices[i].displayName + " on " + reminder.devices[i].serviceAddress);
+      findSpecificNotificiationService(reminder.devices[i].id);
+    }
+  } else {
+    findWebNotServ();
+  }
 }
 
 alerter.showReminderAlert = function(reminder) {
