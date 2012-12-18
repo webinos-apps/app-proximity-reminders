@@ -1,21 +1,15 @@
-#appHeading {
-    text-align:center;
-}
-
 .frontbutton {
     width: 150px;
     display:block;
-    
 }
 
-.frontpage {
-    text-align: center;
+#frontpage {
+    text-align: left;
 }
 
-.frontStatus {
+#frontStatus {
 	color: gray;
 	text-align: center;
-	padding-top: 20px;
 }
 
 .selectedPlace {
@@ -28,25 +22,73 @@
 	color: black;
 }
 
+#checkReminders {
+  align: left;
+}
+
+#reminderNotification {
+  display:none;
+}
+
+#editDiv {
+  display:none;
+}
+
+#editTable #reminderid-table {
+  display: none;
+}
+
+#dateWrapper {
+  display: none;
+}
+
+#recurringWrapper {
+  display:none;
+}
+
+#proximityDiv {
+  display:none;
+}
+
+#placeAddRow1 {
+  display:none;
+}
+
+#placeAddRow2 {
+  display:none;
+}
+
+#editPlaceLocationSelect {
+  width:300pt; 
+  height:300pt
+}
+
+#viewDiv {
+  display:none;
+}
 
 .hiddenDiv {
-    display:none;
+  display:none;
 }
 
-.editTable {
-    border-collapse: collapse;
+#editTable {
+  border-collapse: collapse;
 }
 
-.editTable td {
+#alertPopupDiv {
+  display:none;
+}
+
+#editTable td {
     border: 1px solid #CCC;
 	padding: 5px 5px 5px 5px;
 }
 
-.devicesSelect {
+#devicesSelect {
   width : 100%;
 }
 
-.notificationDiv {
+#notificationDiv {
     border: 2px solid red;
     font-size: 20px;
     padding: 10px 10px 10px 10px;
@@ -65,8 +107,14 @@
 }
 
 .reminderTitle {
+    margin-left: 5px;
     display: block;
 }
+
+.reminderItemDescription {
+    font-weight:bold;
+}
+
 
 .reminderItemDetails {
     display: inline;
@@ -96,6 +144,12 @@ body {
 }
 
 h1 {
+   font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif; 
+   font-weight:bold;
+   font-size: 1.4em;
+}
+
+h2 {
    font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif; 
    font-weight:bold;
    font-size: 1.2em;
