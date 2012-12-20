@@ -4,11 +4,16 @@ app-proximity-reminders
 A webinos app for creating reminders based on where you are and what time it is.
 
 To make the application into a widget, simply zip the contents of the 
-repository.  You can also (for convenience) use the included createwgt.sh
-shell script.
+repository.  You can also (for convenience) use the included shell scripts:
+
+ * create-widget.sh will create the widget package
+ * create-signatures.sh will sign the widget using example author and distributor
+   signatures held in the example-certs directory
+ * create-signed-widget.sh creates a packaged, signed widget.  It just calls the
+   other two scripts.
 
 Warning: at present this doesn't work on Chrome because Chrome doesn't support
-the FileAPI if you are using it from a file.
+the FileAPI if the webpage is loaded over the file:// protocol.
 
 License
 =======
