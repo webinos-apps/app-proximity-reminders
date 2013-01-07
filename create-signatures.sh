@@ -19,12 +19,6 @@ DISTRIBUTOR_PASSWORD=secret
 WIDGET_PATH=$PWD/proximityreminder.wgt
 WIDGET_NO_WEBINOSJS_PATH=$PWD/proximityreminder-nowebinosjs.wgt
 
-if [! -f ./example-certs/author.p12 ]; then
-  echo "Missing author certificates, see the 'example-certs' directory"
-  exit 500
-fi
-
-
 echo "--------------------------------------"
 echo "  Creating example author signature   "
 echo "--------------------------------------"
@@ -35,12 +29,6 @@ if [ $? -ne 0 ]; then
   echo "Failed to create and validate author signatures"
   exit 500
 fi
-
-if [! -f ./example-certs/distributor.p12 ]; then
-  echo "Missing distributor certificates, see the 'example-certs' directory"
-  exit 500
-fi
-
 
 cd $PWD
 
