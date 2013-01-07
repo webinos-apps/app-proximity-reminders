@@ -47,8 +47,8 @@ cd $PWD
 echo "--------------------------------------"
 echo "Creating example distributor signature"
 echo "--------------------------------------"
-$SIGNER --pkcs12 $DISTRIBUTOR_P12 --pwd $DISTRIBUTOR_PASSWORD -x -c $DISTRIBUTOR_X509 -o distributor-signature.xml $WIDGET_PATH 
-$SIGNER --pkcs12 $DISTRIBUTOR_P12 --pwd $DISTRIBUTOR_PASSWORD -x -c $DISTRIBUTOR_X509 -o distributor-signature.xml $WIDGET_NO_WEBINOSJS_PATH
+$SIGNER --pkcs12 $DISTRIBUTOR_P12 --pwd $DISTRIBUTOR_PASSWORD -x -c $DISTRIBUTOR_X509 -o signature1.xml $WIDGET_PATH 
+$SIGNER --pkcs12 $DISTRIBUTOR_P12 --pwd $DISTRIBUTOR_PASSWORD -x -c $DISTRIBUTOR_X509 -o signature1.xml $WIDGET_NO_WEBINOSJS_PATH
 
 if [ $? -ne 0 ]; then
   echo "Failed to create distributor signatures"
