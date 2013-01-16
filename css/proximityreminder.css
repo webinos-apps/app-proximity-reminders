@@ -151,8 +151,17 @@ select, option, input {
   display:none;
 }
 
-#editTable #reminderid-table {
+#editDiv label {
+	display: inline-block;
+	min-width: 150px;
+}
+
+#editContent #reminderid-table {
   display: none;
+}
+
+#dateWrapper, #proximityDiv, #placeAddRow1, #placeAddRow2 {
+	margin-left: 1em;
 }
 
 #dateWrapper {
@@ -176,8 +185,8 @@ select, option, input {
 }
 
 #editPlaceLocationSelect {
-  width:300pt;
-  height:300pt
+  width:300px;
+  height:300px;
 }
 
 #viewDiv {
@@ -188,22 +197,22 @@ select, option, input {
   display:none;
 }
 
-#editTable {
+#editContent {
   border-collapse: collapse;
-  width: 90%;
+  margin-bottom: 1em;
 }
 
 #alertPopupDiv {
   display:none;
 }
 
-#editTable td {
+#editContent td {
     border: 1px solid #CCC;
 	padding: 5px 5px 5px 5px;
 }
 
 #devicesSelect {
-  width : 100%;
+  display: block;
 }
 
 #notificationDiv {
@@ -321,13 +330,6 @@ ul#placeUL {
 		-o-transition: all 0.3s ease-in-out 0s;
 		-ms-transition: all 0.3s ease-in-out 0s;
 		transition: all 0.3s ease-in-out 0s;
-	}
-	#content.slide {
-		-webkit-transform: translateX(-320px);
-		-moz-transform: translateX(-320px);
-		-o-transform: translateX(-320px);
-		-ms-transform: translateX(-320px);
-		transform: translateX(-320px);
 	}
 
 	#westside, #eastside {
