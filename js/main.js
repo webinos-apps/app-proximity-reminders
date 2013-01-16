@@ -21,21 +21,21 @@ main.removeReminder = function(reminder) {
     console.log("Removing reminder from the UI");
     delete main.reminders[reminder.id];
     main.loadViewPage();
-    alerter.jalert("Reminder removed: " + reminder.description);    
+    alerter.jalert("Reminder removed: " + reminder.description);
 }
 
 main.removePlace = function(place) {
     console.log("Removing place from the UI");
     delete main.places[place.id];
     main.loadViewPage();
-    alerter.jalert("Place removed: " + place.description);    
+    alerter.jalert("Place removed: " + place.description);
 }
 
 
 main.makeEnabled = function() {
     $("#viewReminders").attr('disabled', false);
     $("#createReminder").attr('disabled', false);
-    $("#frontStatus").css("color", "black");
+    $("#frontStatus").css("color", "#840");
     $("#frontStatus").text("Connected to webinos");
 }
 
@@ -54,7 +54,7 @@ main.loadApp = function() {
     });
     $("#checkReminders").unbind("change");
     $("#checkReminders").change(alerter.check)
-    
+
     alerter.check();
 }
 
@@ -74,6 +74,9 @@ main.loadAddPage = function(reminder) {
         addDiv.show();
     }
     editor.getEditPage(main.reminders, main.places, reminder);
+    if(window.innerWidth <= 960) {
+		$("#" + CONTENT_DIV_ID).addClass("slide");
+	}
 }
 
 
@@ -85,15 +88,23 @@ main.hideViewPage = function() {
 }
 
 main.loadViewPage = function() {
-    $("#morecontent").append("<div id='" + VIEW_DIV_ID + "'></div>");
     var viewDiv = $("#" + VIEW_DIV_ID);
     viewer.getRemindersPage(main.reminders);
     viewer.getPlaces(main.places, main.reminders);
     viewDiv.show();
+    if(window.innerWidth <= 960) {
+		$("#" + CONTENT_DIV_ID).addClass("slide");
+	}
 }
 
 
 $(document).ready(function () {
     main.refreshAllReminders();
+    if(window.innerWidth <= 960) {
+		$("#"+CONTENTS_LEFT_DIV_ID+", #"+CONTENTS_RIGHT_DIV_ID).width(window.innerWidth);
+		$("#"+MOBILE_BACK_FOOTER_ID).click(function () {
+			$("#" + CONTENT_DIV_ID).removeClass("slide");
+		});
+	}
 });
 

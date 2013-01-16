@@ -3,8 +3,8 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
     <title>Proximity Reminder</title>
-    <script type="text/javascript" src="./js/jquery-1.8.2.js"></script>
-    <script type="text/javascript" src="./js/jquery-ui-1.9.0.custom.min.js"></script>
+    <script type="text/javascript" src="./js/jquery-1.8.3.js"></script>
+    <script type="text/javascript" src="./js/jquery-ui-1.9.2.custom.min.js"></script>
     <script type="text/javascript" src="./js/jquery-ui-timepicker-addon.js"></script>
     <script type="text/javascript" src="./js/jquery-ui-sliderAccess.js"></script>
     <script type="text/javascript" src="./js/webinos.js"></script>
@@ -17,142 +17,146 @@
     <script type="text/javascript" src="./js/alertreminder.js"></script>
     <script type="text/javascript" src="./js/main.js"></script>
     <link rel="stylesheet" type="text/css" href="./css/proximityreminder.css" />
-    <link rel="stylesheet" type="text/css" href="./css/jquery-ui-1.9.0.custom.css" />
+    <link rel="stylesheet" type="text/css" href="./css/custom-theme/jquery-ui-1.9.2.custom.css" />
     <link rel="stylesheet" type="text/css" href="./css/jquery-ui-timepicker-addon.css" />
     <link rel="icon" type="image/png" href="./remind_me.png" />
   </head>
   <body>
     <div id="content">
-      <h1>ProximityReminder</h1>
-      <!-- Display notification alert -->
-      <div id="reminderNotification" class="notificationDiv"></div>
-      <!-- Display initial buttons -->
-      <div id="frontpage">
-        <button id="createReminder" class="frontbutton" type="button" disabled="true">
-          Create a reminder
-        </button>
-        <button id="viewReminders" class="frontbutton" type="button" disabled="true">
-          View reminders
-        </button>
-        <input id="checkReminders" type="checkbox" value="true" defaultChecked="true">
-          Check reminders
-        </input>
+      <div id="westside">
+        <p id="frontStatus" class='status'>Not connected to webinos</p>
+        <h1>Proximity Reminder</h1>
+        <!-- Display initial buttons -->
+        <div id="frontpage">
+          <button id="createReminder" class="frontbutton" type="button" disabled="true">
+            Create a reminder
+          </button>
+          <button id="viewReminders" class="frontbutton" type="button" disabled="true">
+            View reminders
+          </button>
+          <input id="checkReminders" type="checkbox" value="true" defaultChecked="true">
+            Check reminders
+          </input>
+        </div>
+        <!-- Display notification alert -->
+        <div id="reminderNotification" class="notificationDiv"></div>
       </div>
-      <div id="morecontent">
-        <!-- Show the "edit reminders" page -->
-        <div id="editDiv">
-          <hr />
-          <h2 id="editHeading">
-            Add Reminder
-          </h2>
-          <table id="editTable" class="editTable">
-            <tr id="reminderid-table">
-              <td>Reminder Id</td>
-              <td id="reminderIdCell"></td>
-            </tr>
-            <tr>
-              <td>Enabled?</td>
-              <td>
-                <input id="editEnabled" type="checkbox" value="true" defaultChecked="true">
-                </input>
-              </td>
-            </tr>
-            <tr>
-              <td>Description</td>
-              <td>
-                <input id="editDescription" type="text"></input>
-              </td>
-            </tr>
-            <tr>
-              <td>Devices to remind</td>
-              <td>
-                <select multiple="true" id="devicesSelect"></select>
-              </td>
-            </tr>
-            <tr>
-              <td>When?</td>
-              <td>
-                <select id="dateSelect">
-                  <option class="persistentOption" value="anytime">Any time</option>
-                  <option class="persistentOption" value="selecttime">Select a time</option>
-                </select>
-                <div id="dateWrapper">Start:
-                  <input type="text" id="datepicker" />
-                  <br/>End:
-                  <input type="text" id="datepicker2" />
-                  <br />
-                  <div id="recurringWrapper">
-                    <!-- Not fully implemented yet -->Reccurring:
-                    <select id="recurringSelect">
-                      <option id="recurringOption-never" value="never" selected="true">
-                        Never
-                      </option>
-                      <option id="recurringOption-daily" value="daily">Daily</option>
-                      <option id="recurringOption-weekly" value="weekly">Weekly</option>
-                      <option id="recurringOption-monthly" value="monthly">Monthly</option>
-                      <option id="recurringOption-yearly" value="yearly">Yearly</option>
+      <div id="eastside">
+        <div id="morecontent">
+          <!-- Show the "edit reminders" page -->
+          <div id="editDiv">
+            <hr class="mobvis" />
+            <h2 id="editHeading">
+              Add Reminder
+            </h2>
+            <table id="editTable" class="editTable">
+              <tr id="reminderid-table">
+                <td>Reminder Id</td>
+                <td id="reminderIdCell"></td>
+              </tr>
+              <tr>
+                <td>Enabled?</td>
+                <td>
+                  <input id="editEnabled" type="checkbox" value="true" defaultChecked="true">
+                  </input>
+                </td>
+              </tr>
+              <tr>
+                <td>Description</td>
+                <td>
+                  <input id="editDescription" type="text"></input>
+                </td>
+              </tr>
+              <tr>
+                <td>Devices to remind</td>
+                <td>
+                  <select multiple="true" id="devicesSelect"></select>
+                </td>
+              </tr>
+              <tr>
+                <td>When?</td>
+                <td>
+                  <select id="dateSelect">
+                    <option class="persistentOption" value="anytime">Any time</option>
+                    <option class="persistentOption" value="selecttime">Select a time</option>
+                  </select>
+                  <div id="dateWrapper">Start:
+                    <input type="text" id="datepicker" />
+                    <br/>End:
+                    <input type="text" id="datepicker2" />
+                    <br />
+                    <div id="recurringWrapper">
+                      <!-- Not fully implemented yet -->Reccurring:
+                      <select id="recurringSelect">
+                        <option id="recurringOption-never" value="never" selected="true">
+                          Never
+                        </option>
+                        <option id="recurringOption-daily" value="daily">Daily</option>
+                        <option id="recurringOption-weekly" value="weekly">Weekly</option>
+                        <option id="recurringOption-monthly" value="monthly">Monthly</option>
+                        <option id="recurringOption-yearly" value="yearly">Yearly</option>
+                      </select>
+                    </div>
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td>Where?</td>
+                <td>
+                  <select id="placeSelect">
+                    <option value="_ANYWHERE" class="persistentOption" id="place-option-_ANYWHERE">
+                      Anywhere
+                    </option>
+                  </select>
+                  <div id="proximityDiv">Within
+                    <input id="proximityAmount" type="text" value="10" width="50px"
+                    />
+                    <select id="proximityUnits">
+                      <option selected="true" value="metres">metres</option>
+                      <!--
+                        <option>feet</option>
+                        <option>yards</option>
+                        <option>kilometers</option>
+                        <option>miles</option>
+                        -->
                     </select>
                   </div>
-                </div>
-              </td>
-            </tr>
-            <tr>
-              <td>Where?</td>
-              <td>
-                <select id="placeSelect">
-                  <option value="_ANYWHERE" class="persistentOption" id="place-option-_ANYWHERE">
-                    Anywhere
-                  </option>
-                </select>
-                <div id="proximityDiv">Within
-                  <input id="proximityAmount" type="text" value="10" width="50px"
-                  />
-                  <select id="proximityUnits">
-                    <option selected="true" value="metres">metres</option>
-                    <!-- 
-                      <option>feet</option>
-                      <option>yards</option>
-                      <option>kilometers</option>
-                      <option>miles</option>
-                      -->
-                  </select>
-                </div>
-              </td>
-            </tr>
-            <tr id="placeAddRow1">
-              <td>Place description</td>
-              <td>
-                <input id="editPlaceDescription" type="text" />
-              </td>
-            </tr>
-            <tr id="placeAddRow2">
-              <td>Select location</td>
-              <td>
-                <div id="editPlaceLocationSelect"></div>
-              </td>
-            </tr>
-          </table>
-          <button id="saveReminderButton" class="frontbutton" type="button">
-            Save reminder
-          </button>
-        </div>
-        <!-- Show the list of reminders and places -->
-        <div id="viewDiv">
-          <hr />
-          <h2>Reminders</h2>
-          <ul id="viewList" data-role="listview" class="reminderList"></ul>
-          <h2>Places</h1>
-          <ul class="placeList" id="placeUL"></ul>
-          <div id="mapImgWrapper">
-            <h2 id="mapImgHeading"></h2>
-            <div id="mapImgDeleteButton"></div>
-            <div id="map"></div>
+                </td>
+              </tr>
+              <tr id="placeAddRow1">
+                <td>Place description</td>
+                <td>
+                  <input id="editPlaceDescription" type="text" />
+                </td>
+              </tr>
+              <tr id="placeAddRow2">
+                <td>Select location</td>
+                <td>
+                  <div id="editPlaceLocationSelect"></div>
+                </td>
+              </tr>
+            </table>
+            <button id="saveReminderButton" class="frontbutton" type="button">
+              Save reminder
+            </button>
+          </div>
+          <!-- Show the list of reminders and places -->
+          <div id="viewDiv">
+            <hr class="mobvis" />
+            <h2>Reminders</h2>
+            <ul id="viewList" data-role="listview" class="reminderList"></ul>
+            <h2>Places</h1>
+            <ul class="placeList" id="placeUL"></ul>
+            <div id="mapImgWrapper">
+              <h2 id="mapImgHeading"></h2>
+              <div id="mapImgDeleteButton"></div>
+              <div id="map"></div>
+            </div>
           </div>
         </div>
+        <div id="mobileBackFooter">&lt;&lt; Back</div>
       </div>
       <div id="alertPopupDiv" title="Information"></div>
-      <hr />
-      <p id="frontStatus" class='status'>Not connected to webinos</p>
     </div>
   </body>
 </html>

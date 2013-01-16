@@ -23,17 +23,17 @@ viewer.getReminderItem = function(reminder) {
     var row = $('<div id="reminderView-' + reminder.id + '" class=\'reminderItem\'></div>');
     var desc = $('<a href="#description-' + reminder.id + '" class="reminderItemDescription" id="reminderItemDescription-' + reminder.id + '"></a>').text(reminder.description);
     var rowDetails = $('<div id="reminderItemDetails-' + reminder.id + '"></div>');
-    
+
     desc.unbind("click");
     desc.on("click", null, reminder, function(evt) {
-       viewer.clickReminder(evt.data); 
+       viewer.clickReminder(evt.data);
     });
-         
+
     var whenStartTime = $('<div class="reminderItemDetails reminderItemStartTime"></div>');
     var whenStartDate = $('<div class="reminderItemDetails reminderItemStartDate"></div');
     var whenEndTime = $('<div class="reminderItemDetails reminderItemEndTime"></div');
     var whenEndDate = $('<div class="reminderItemDetails reminderItemEndDate"></div');
-    
+
     var whenRecurring = $('<div class="reminderItemDetails reminderItemRecurring"></div');
     if (reminder.when !== undefined && reminder.when !== "anytime" && reminder.when.startdate !== undefined && reminder.when.enddate !== undefined) {
         whenStartTime.append(reminder.when.startdate.toLocaleTimeString());
@@ -45,7 +45,7 @@ viewer.getReminderItem = function(reminder) {
         whenStartTime.append("Any time");
         whenStartDate.append("");
         whenEndTime.append("");
-        whenEndDate.append("");        
+        whenEndDate.append("");
     }
 
     var where = $('<div class="reminderItemDetails reminderItemLocation"></div');
@@ -57,11 +57,11 @@ viewer.getReminderItem = function(reminder) {
     }
 
     var enabled = $('<div class="reminderItemDetails reminderItemEnabled"></div>');
-    if (reminder.enabled === undefined || reminder.enabled) { 
-        enabled.append("Yes"); 
+    if (reminder.enabled === undefined || reminder.enabled) {
+        enabled.append("Yes");
     } else {
         enabled.append("No");
-        row.addClass("disabledReminder");        
+        row.addClass("disabledReminder");
     }
 
     var devicesToRemind = $('<div class="reminderItemDetails reminderItemDevices"></div>');
@@ -69,7 +69,7 @@ viewer.getReminderItem = function(reminder) {
       var deviceToRemindList = $('<ul></ul>');
       for (var i=0; i< reminder.devices.length; i++) {
         deviceToRemindList.append($('<li>' + reminder.devices[i].serviceAddress + '</li>'));
-      } 
+      }
       devicesToRemind.append(deviceToRemindList);
     } else {
       devicesToRemind.append("All devices");
@@ -92,7 +92,7 @@ viewer.getReminderItem = function(reminder) {
 
     row.append(desc);
     row.append(rowDetails);
-    
+
     var whenStartTimeTitle = $('<div class="reminderTitle">Start time:</div>');
     whenStartTimeTitle.append(whenStartTime);
     var whenStartDateTitle = $('<div class="reminderTitle">Start date:</div>');
@@ -110,26 +110,25 @@ viewer.getReminderItem = function(reminder) {
         rowDetails.append(whenEndDateTitle);
         rowDetails.append(whenRecurringTitle);
     } else {
-        whenStartTimeTitle.text("Time: " + whenStartTime.text());
         rowDetails.append(whenStartTimeTitle);
     }
 
     var whereTitle = $('<div class="reminderTitle">Location: </div>');
     whereTitle.append(where);
-    
+
     var devicesTitle = $('<div class="reminderTitle">Devices to remind: </div>');
     devicesTitle.append(devicesToRemind);
-    
+
     var enabledTitle = $('<div class="reminderTitle">Enabled? </div>');
     enabledTitle.append(enabled);
-    
+
     rowDetails.append(whereTitle);
-    rowDetails.append(devicesTitle);    
+    rowDetails.append(devicesTitle);
     rowDetails.append(enabledTitle);
     rowDetails.append(editCell);
     rowDetails.append(deleteCell);
     rowDetails.hide();
-    
+
     return row;
 }
 
@@ -140,7 +139,7 @@ viewer.onEditIndividualButton = function(reminder) {
 
 viewer.onDeleteIndividualButton = function(reminder) {
     storer.deleteReminder(reminder, function() {
-        
+
         main.removeReminder(reminder);
     }, function(err) {
         alerter.jalert("Could not remove reminder: " + reminder.description);
@@ -187,7 +186,7 @@ viewer.getPlaceListItem = function(place, reminders) {
     placeLink.on("click", null, place, function(evt) {
         viewer.showMapId(evt.data);
     });
-    
+
     placeItem.append(placeLink);
     return placeItem;
 }
@@ -218,11 +217,11 @@ viewer.deletePlace = function(place) {
 }
 
 viewer.showMapId = function(place) {
-    
+
     $('#map').html(viewer.getGoogleMap(place.coordinates));
     $('#mapImgWrapper').show();
     $('#mapImgHeading').text(place.description);
-    
+
     if (viewer.isOrphanPlace(place, main.reminders)) {
         var placeDeleteButton = $('<button id="deletePlace-' + place.id + '" class="deletePlaceButton" type="button">Delete "' + place.description + '"</button>');
         placeDeleteButton.unbind("click");
@@ -233,13 +232,13 @@ viewer.showMapId = function(place) {
     } else {
         $('#mapImgDeleteButton').empty();
     }
-    
+
     $('.placeLink').addClass("notSelectedPlace");
     $('.placeLink').removeClass("selectedPlace");
-    
+
     $('#placelist-link-' + place.id).addClass("selectedPlace");
     $('#placelist-link-' + place.id).removeClass("notSelectedPlace");
-    
+
 }
 
 viewer.showMap = function() {
@@ -249,8 +248,8 @@ viewer.showMap = function() {
 
 viewer.getGoogleMap = function(coords) {
 
-    var image_url = "http://maps.googleapis.com/maps/api/staticmap?" + "center=" + coords.latitude + "," + coords.longitude + "&zoom=12&size=400x400&sensor=false" + "&markers=color:blue|label:S|" + coords.latitude + ',' + coords.longitude;
+    var image_url = "http://maps.googleapis.com/maps/api/staticmap?" + "center=" + coords.latitude + "," + coords.longitude + "&zoom=12&size=300x300&sensor=false" + "&markers=color:blue|label:S|" + coords.latitude + ',' + coords.longitude;
     var gMap = $("<img />");
-    gMap.attr("src", image_url).attr('id', MAP_IMG_ID);
+    gMap.attr("src", image_url).attr('id', MAP_IMG_ID).attr('width', '300px').attr('height', '300px');
     return gMap;
 }
