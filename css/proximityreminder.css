@@ -372,6 +372,14 @@ ul#placeUL {
 		padding-bottom: 2em;
 	}
 
+	#editDiv label {
+		display: block;
+	}
+
+	#devicesSelect {
+		font-size: 80%;
+	}
+
 	#mobileBackFooter {
 		display: block;
 		position: absolute;
