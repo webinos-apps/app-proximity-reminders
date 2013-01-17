@@ -1520,7 +1520,16 @@ if (typeof webinos.util === "undefined") webinos.util = {};
             if (typeof webinos.file !== 'undefined' && typeof webinos.file.Service !== 'undefined')
                 typeMap['http://webinos.org/api/file'] = webinos.file.Service;
             if (typeof TestModule !== 'undefined') typeMap['http://webinos.org/api/test'] = TestModule;
-            if (typeof ActuatorModule !== 'undefined') typeMap['http://webinos.org/api/actuator'] = ActuatorModule;
+            if (typeof ActuatorModule !== 'undefined') {
+                typeMap['http://webinos.org/api/actuators'] = ActuatorModule;
+                typeMap['http://webinos.org/api/actuators.linearmotor'] = ActuatorModule;
+                typeMap['http://webinos.org/api/actuators.switch'] = ActuatorModule;
+                typeMap['http://webinos.org/api/actuators.rotationalmotor'] = ActuatorModule;
+                typeMap['http://webinos.org/api/actuators.vibratingmotor'] = ActuatorModule;
+                typeMap['http://webinos.org/api/actuators.servomotor'] = ActuatorModule;
+                typeMap['http://webinos.org/api/actuators.swivelmotor'] = ActuatorModule;
+                typeMap['http://webinos.org/api/actuators.thermostat'] = ActuatorModule;
+            }
             if (typeof WebNotificationModule !== 'undefined') typeMap['http://webinos.org/api/webnotification'] = WebNotificationModule;
             if (typeof oAuthModule!== 'undefined') typeMap['http://webinos.org/mwc/oauth'] = oAuthModule;
             if (typeof WebinosGeolocation !== 'undefined') typeMap['http://www.w3.org/ns/api-perms/geolocation'] = WebinosGeolocation;
@@ -1534,6 +1543,10 @@ if (typeof webinos.util === "undefined") webinos.util = {};
                 typeMap['http://webinos.org/api/sensors.temperature'] = Sensor;
                 typeMap['http://webinos.org/api/sensors.light'] = Sensor;
                 typeMap['http://webinos.org/api/sensors.proximity'] = Sensor;
+                typeMap['http://webinos.org/api/sensors.noise'] = Sensor;
+                typeMap['http://webinos.org/api/sensors.pressure'] = Sensor;
+                typeMap['http://webinos.org/api/sensors.humidity'] = Sensor;
+                typeMap['http://webinos.org/api/sensors.heartratemonitor'] = Sensor;
             }
             if (typeof PaymentModule !== 'undefined') typeMap['http://webinos.org/api/payment'] = PaymentModule;
             if (typeof UserProfileIntModule !== 'undefined') typeMap['UserProfileInt'] = UserProfileIntModule;
@@ -1544,6 +1557,7 @@ if (typeof webinos.util === "undefined") webinos.util = {};
             //if (typeof DiscoveryModule !== 'undefined') typeMap['http://webinos.org/manager/discovery/bluetooth'] = DiscoveryModule;
             if (typeof DiscoveryModule !== 'undefined') typeMap['http://webinos.org/api/discovery'] = DiscoveryModule;
             if (typeof AuthenticationModule !== 'undefined') typeMap['http://webinos.org/api/authentication'] = AuthenticationModule;
+            if (typeof MediaContentModule !== 'undefined') typeMap['http://webinos.org/api/mediacontent'] = MediaContentModule;
 
             if (isOnNode()) {
                 var path = require('path');
@@ -3271,6 +3285,12 @@ function clearWatch(watchId) {
 
     };
     
+    Sensor.prototype.configureSensor = function(options) {
+        var rpc = webinos.rpcHandler.createRPC(this, 'configureSensor', options);
+        
+        webinos.rpcHandler.registerCallbackObject(rpc);
+        webinos.rpcHandler.executeRPC(rpc);
+    };
 
     Sensor.prototype.addEventListener = function(eventType, eventHandler, capture) {
         var rpc = webinos.rpcHandler.createRPC(this, 'addEventListener', eventType);
@@ -3591,7 +3611,7 @@ function clearWatch(watchId) {
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *	 http://www.apache.org/licenses/LICENSE-2.0
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -3648,7 +3668,7 @@ function clearWatch(watchId) {
 
   /* Administration */
 
-  var CHANNEL_NAMESPACE_REGEXP = /^urn:[a-z0-9][a-z0-9-]{0,31}:[a-z0-9()+,\-.:=@;$_!*'%/?#]+$/i;
+  var CHANNEL_NAMESPACE_REGEXP = /^urn:[a-z0-9][a-z0-9\-]{0,31}:[a-z0-9()+,\-.:=@;$_!*'%\/?#]+$/i;
   var CHANNEL_SEARCH_TIMEOUT = 5000;
 
   var MODE_SEND_RECEIVE = "send-receive";
@@ -5321,6 +5341,125 @@ function dispatchEvent(event) {
                                         self.extras=null;        
     };
             
+}());
+
+/*******************************************************************************
+ *  Code contributed to the webinos project
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ * Copyright 2011 Habib Virji, Samsung Electronics (UK) Ltd
+ ******************************************************************************/
+(function () {
+  /**
+   * Webinos MediaContent service constructor (client side).
+   * @constructor
+   * @param obj Object containing displayName, api, etc.
+   */
+  MediaContentModule = function (obj) {
+    this.base = WebinosService;
+    this.base(obj);
+  };
+
+  MediaContentModule.prototype = new WebinosService;
+
+  /**
+   * To bind the service.
+   * @param bindCB BindCallback object.
+   */
+  MediaContentModule.prototype.bindService = function (bindCB, serviceId) {
+    this.getLocalFolders = function (successCB, errorCB) {
+      var rpc = webinos.rpcHandler.createRPC(this, "getLocalFolders", []);
+      webinos.rpcHandler.executeRPC(rpc,
+        function (params) {
+          successCB(params);
+        },
+        function (error) {
+          errorCB(error);
+        }
+        );
+    };
+    this.findItem = function (successCB, errorCB, params) {
+      "use strict";
+      var rpc = webinos.rpcHandler.createRPC(this, "findItem", params);
+      webinos.rpcHandler.executeRPC(rpc,
+        function (params) {
+          successCB(params);
+        },
+        function (error) {
+          errorCB(error);
+        }
+        );
+    };
+    this.updateItem = function (successCB, errorCB) {
+      "use strict";
+      var rpc = webinos.rpcHandler.createRPC(this, "updateItem", []);
+      webinos.rpcHandler.executeRPC(rpc,
+        function (params) {
+          successCB(params);
+        },
+        function (error) {
+          errorCB(error);
+        }
+        );
+    };
+
+    this.updateItemsBatch = function (successCB, errorCB) {
+      "use strict";
+      var rpc = webinos.rpcHandler.createRPC(this, "updateItemBatches", []);
+      webinos.rpcHandler.executeRPC(rpc,
+        function (params) {
+          successCB(params);
+        },
+        function (error) {
+          errorCB(error);
+        }
+        );
+    };
+
+    this.getContents = function (listener, errorCB, params) {
+      "use strict";
+      var rpc = webinos.rpcHandler.createRPC(this, "getContents", params);//, totalBuffer = 0, data = "";
+      rpc.onEvent = function (params) {
+        // we were called back, now invoke the given listener
+     /*   totalBuffer += params.currentBuffer;
+        data += btoa(params.contents);
+        if (totalBuffer === params.totalLength) {
+          //photo = new Buffer(data, 'binary').toString('base64');
+          window.open("data:image/png;base64"+atob(data));*/
+        listener(params);
+          //totalBuffer = 0;
+          //data = '';
+          //webinos.rpcHandler.unregisterCallbackObject(rpc);
+        //}
+      };
+
+      webinos.rpcHandler.registerCallbackObject(rpc);
+      webinos.rpcHandler.executeRPC(rpc);
+      /*webinos.rpcHandler.executeRPC(rpc,
+        function (params) {
+          totalBuffer += params.currentBuffer;
+          if (totalBuffer === params.totalLength) {
+            successCB(params);
+            totalBuffer = 0;
+          }
+        },
+        function (error) {
+          errorCB(error);
+        }
+        );*/
+    };
+  };
 }());
 
 }
