@@ -1,41 +1,167 @@
-.frontbutton {
-    width: 150px;
-    display:block;
+@font-face {
+    font-family: 'OpenSansRegular';
+    src: url('../fonts/OpenSans-Regular-webfont.eot');
+    src: url('../fonts/OpenSans-Regular-webfont.eot?#iefix') format('embedded-opentype'),
+         url('../fonts/OpenSans-Regular-webfont.woff') format('woff'),
+         url('../fonts/OpenSans-Regular-webfont.ttf') format('truetype'),
+         url('../fonts/OpenSans-Regular-webfont.svg#OpenSansRegular') format('svg');
+    font-weight: normal;
+    font-style: normal;
+}
+@font-face {
+    font-family: 'OpenSansLight';
+    src: url('../fonts/OpenSans-Light-webfont.eot');
+    src: url('../fonts/OpenSans-Light-webfont.eot?#iefix') format('embedded-opentype'),
+         url('../fonts/OpenSans-Light-webfont.woff') format('woff'),
+         url('../fonts/OpenSans-Light-webfont.ttf') format('truetype'),
+         url('../fonts/OpenSans-Light-webfont.svg#OpenSansLight') format('svg');
+    font-weight: normal;
+    font-style: normal;
 }
 
-#frontpage {
-    text-align: left;
+html, body, #content {
+	height: 100%;
+}
+
+body {
+   font-family: 'OpenSansRegular', sans-serif;
+   font-weight: 300;
+   font-size: 1em;
+   margin: 0;
+   overflow: hidden;
+   background: #F90;
+}
+
+h1 {
+	font-family: 'OpenSansLight';
+	font-size: 550%;
+	font-weight: normal;
+	margin: 0;
+}
+#westside h1 {
+	margin: 0 0 1em;
+	line-height: 0.9em;
+}
+
+h2 {
+   font-family: 'OpenSansLight';
+   font-size: 250%;
+   font-weight: normal;
+   margin: 0;
+}
+#mapImgHeading {
+	font-size: 170%;
+	border-top: 1px solid #F90;
+	margin-top: 1em;
+}
+
+a {
+	color: #F90;
+}
+
+button {
+	background: #403;
+	border: 1px solid #B7A;
+	color: white;
+	padding: 0.5em;
+	font-size: 100%;
+	cursor: pointer;
+	border-radius: 5px;
+}
+button:hover {
+	background: #B7A;
+	border: 1px solid #403;
+}
+
+select, option, input {
+	background: #B7A;
+	border: 1px solid #B7A;
+	color: white;
+	font-size: 100%;
+}
+
+.mobvis {
+	display: none;
+}
+
+#westside, #eastside {
+	display: inline-block;
+	vertical-align: top;
+	height: 100%;
+	box-sizing: border-box;
+	-webkit-box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	padding-top: 8%;
+}
+#westside {
+	width: 40%;
+	text-align: right;
+	padding-right: 50px;
+	background: #F90;
+	color: #fff;
+}
+#eastside {
+	width: 60%;
+	margin-left: -0.25em; /*compenstaing for the new line*/
+	padding-left: 50px;
+	padding-bottom: 40px;
+	overflow: auto;
+	background: #fff;
+}
+#eastside > div {
+	width: 97%; /*stupid hack*/
+}
+
+.frontbutton {
+    /*width: 150px;*/
+    display:block;
+}
+#westside .frontbutton {
+	margin-right: 0;
+	margin-left: auto;
 }
 
 #frontStatus {
 	color: gray;
-	text-align: center;
+	margin: 0;
+	position: fixed;
+	bottom: 10px;
+	left: 20px;
 }
 
 .selectedPlace {
-	background-color: yellow;
-	color: red;
+	background-color: #F90;
+	color: #fff;
 }
-
-.notSelectedPlace {
-	background-color: white;
-	color: black;
+.selectedPlace:hover {
+	color: #f90;
 }
 
 #checkReminders {
-  align: left;
+  margin-top: 2em;
 }
 
 #reminderNotification {
   display:none;
+  border-top: 1px solid #403;
+  margin-top: 1em;
 }
 
 #editDiv {
   display:none;
 }
 
-#editTable #reminderid-table {
+#editDiv label {
+	display: inline-block;
+	min-width: 150px;
+}
+
+#editContent #reminderid-table {
   display: none;
+}
+
+#dateWrapper, #proximityDiv, #placeAddRow1, #placeAddRow2 {
+	margin-left: 1em;
 }
 
 #dateWrapper {
@@ -59,8 +185,8 @@
 }
 
 #editPlaceLocationSelect {
-  width:300pt; 
-  height:300pt
+  width:300px;
+  height:300px;
 }
 
 #viewDiv {
@@ -71,21 +197,22 @@
   display:none;
 }
 
-#editTable {
+#editContent {
   border-collapse: collapse;
+  margin-bottom: 1em;
 }
 
 #alertPopupDiv {
   display:none;
 }
 
-#editTable td {
+#editContent td {
     border: 1px solid #CCC;
 	padding: 5px 5px 5px 5px;
 }
 
 #devicesSelect {
-  width : 100%;
+  display: block;
 }
 
 #notificationDiv {
@@ -109,20 +236,21 @@
 .reminderTitle {
     margin-left: 5px;
     display: block;
+    font-weight: bold;
 }
-
-.reminderItemDescription {
-    font-weight:bold;
-}
-
 
 .reminderItemDetails {
     display: inline;
     padding-left: 5px;
+    font-weight: normal;
+}
+.reminderItemDevices {
+	padding-left: 0;
 }
 
 .reminderButton {
-    display: inline;
+    display: inline-block;
+    margin-top: 0.5em;
 }
 
 .reminderItemEditCell {
@@ -137,74 +265,132 @@
     color: grey;
 }
 
-body {
-   font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif; 
-   font-weight: 300;
-   font-size: 1em;  
-}
 
-h1 {
-   font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif; 
-   font-weight:bold;
-   font-size: 1.4em;
-}
-
-h2 {
-   font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif; 
-   font-weight:bold;
-   font-size: 1.2em;
-}
-
-
-li.reminderListItem {
-   padding: 2px 2px 2px 2px;
+li.reminderListItem, li.placeListItem {
+   padding: 2px;
    display:block;
    width:100%;
 }
 
-li.reminderListItem :hover {
-    background-color: #FFFF66;
+li.reminderListItem:hover, li.placeListItem :hover {
+    background-color: #ffa;
 }
 
-li.reminderListItem a {
+li.reminderListItem a, li.placeListItem a {
     text-decoration: none;
     width:100%;
     display:block;
+    font-size: 130%;
 }
 
-
-li.placeListItem {
-   padding: 2px 2px 2px 2px;
-   display:block;
-   width:100%;
-}
-
-li.placeListItem :hover {
-    background-color: #FFFF66;
+div.reminderItem > div {
+	padding: 1em;
 }
 
 li.placeListItem button {
     display:inline;
 }
 
-li.placeListItem a {
-    text-decoration: none;
-    width:100%;
-    display:block;
-}
-
-
-
-
 
 ul#viewList {
   list-style-type: none;
   margin: 0;
   padding: 0;
+  margin-bottom: 1em;
 }
 
 ul#placeUL {
   list-style-type: none;
   margin: 0;
   padding: 0;
+}
+
+#mobileBackFooter {
+	display: none;
+}
+
+/*********** MOBILE ******************/
+
+@media screen and (max-width: 960px) {
+
+	h1 {
+		font-size: 350%;
+	}
+
+	body {
+		overflow: visible;
+		overflow-x: hidden;
+	}
+	#content {
+		float: left;
+		margin: 0 -999em 0 0;
+		position: relative;
+		-webkit-transition: all 0.3s ease-in-out 0s;
+		-moz-transition: all 0.3s ease-in-out 0s;
+		-o-transition: all 0.3s ease-in-out 0s;
+		-ms-transition: all 0.3s ease-in-out 0s;
+		transition: all 0.3s ease-in-out 0s;
+	}
+
+	#westside, #eastside {
+		display: block;
+		height: auto;
+		width: 100%;
+		padding-top: 15%;
+		float: left;
+		position: relative;
+	}
+	#eastside {
+		padding: 0;
+		margin-left: 0;
+		padding-left: 10px;
+		height: 100%;
+		overflow: hidden;
+	}
+	#westside {
+		padding-right: 20px;
+	}
+
+	#eastside > div {
+		width: auto;
+	}
+
+	#frontStatus {
+		font-size: 80%;
+		position: absolute;
+		bottom: auto;
+		left: auto;
+		top: 10px;
+		right: 20px;
+	}
+
+	#morecontent {
+		height: 100%;
+		overflow: auto;
+	}
+	#viewDiv, #editDiv {
+		padding-bottom: 2em;
+	}
+
+	#editDiv label {
+		display: block;
+	}
+
+	#devicesSelect {
+		font-size: 80%;
+	}
+
+	#mobileBackFooter {
+		display: block;
+		position: absolute;
+		bottom: 0;
+		width: 100% !important;
+		left: 0;
+		padding: 0.5em;
+		cursor: pointer;
+		border-top: 2px solid #ff9900;
+		background: #ff9900 url(custom-theme/images/ui-bg_diagonals-small_75_ff9900_40x40.png) 50% 50% repeat;
+		color: #ffffff;
+		font-weight: bold;
+	}
 }
