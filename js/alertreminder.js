@@ -22,11 +22,11 @@ alerter.ticker.stop = function() {
 alerter.ticker.start = function() {
     if (alerter.reminderInterval === null) {
         console.log("Starting ticker");
-        alerter.reminderInterval = setInterval(function() { 
+        alerter.reminderInterval = setInterval(function() {
             console.log("Checking all reminders");
             alerter.doAllReminders(main.reminders);
         }, 10000);
-    }  
+    }
 }
 
 alerter.doAllReminders = function(rems) {
@@ -34,12 +34,12 @@ alerter.doAllReminders = function(rems) {
         var valid = finder.findValidReminders(new Date(), position.coords, rems);
         console.log("Found " + valid.length + " valid reminders");
         for (var i=0; i<valid.length; i++) {
-            alerter.showReminderAlert(valid[i]);       
-        }    
+            alerter.showReminderAlert(valid[i]);
+        }
     }, function(err) {
         console.log("Failed to get a valid position");
         var valid = finder.findValidReminders(new Date(), null, rems);
-        
+
     });
 }
 
@@ -50,12 +50,12 @@ function rubbishClone(obj) {
 alerter.detatchReminderPlace = function(reminder) {
     if (reminder.where !== undefined && reminder.where !== "anywhere") {
         for (var i = 0; i< reminder.where.length; i++) {
-            if (reminder.where[i] !== undefined && 
-                    reminder.where[i] !== "anywhere" && 
-                    reminder.where[i].place !== undefined && 
+            if (reminder.where[i] !== undefined &&
+                    reminder.where[i] !== "anywhere" &&
+                    reminder.where[i].place !== undefined &&
                     reminder.where[i].place.id !== undefined) {
-                    
-                reminder.where[i].place = reminder.where[i].place.id;        
+
+                reminder.where[i].place = reminder.where[i].place.id;
             }
         }
     }
@@ -70,7 +70,7 @@ alerter.showBrowserNotification = function(reminder) {
        onshow: function() {
           alerter.close(reminder);
        }
-       } 
+       }
      );
      newNotif.show();
   }
@@ -90,40 +90,40 @@ alerter.showHTMLNotification = function(reminder) {
 
 alerter.showWebinosNotification = function(reminder) {
   var useWebNotServ = function(service) {
-    new service.WebNotification("Reminder!", 
+    new service.Notification("Reminder!",
       {body: reminder.description, iconUrl: "../remind_me.png"});
-		service.onClick = function () {
-		  console.log("reminder notification clicked");
-	  };
-		service.onClose = function (){
-		  console.log("reminder notification closed");
-		  alerter.close(reminder);
-	  };
-		service.onShow  = function (){
-		  console.log("reminder notification showed");
-	  }
-		service.onError = function (err){
-		  console.log("reminder notification error");
-	  };         
+      service.onClick = function () {
+        console.log("reminder notification clicked");
+     };
+      service.onClose = function (){
+        console.log("reminder notification closed");
+        alerter.close(reminder);
+     };
+      service.onShow  = function (){
+        console.log("reminder notification showed");
+     }
+      service.onError = function (err){
+        console.log("reminder notification error");
+     };
   };
   var foundWebNotServ = function(service) {
     service.bindService({ onBind: useWebNotServ });
-      
-  };  
+
+  };
   var findWebNotServ = function() {
     webinos.discovery.findServices(
-      new ServiceType('http://webinos.org/api/webnotification'), 
+      new ServiceType('http://webinos.org/api/notifications'),
       { onFound: foundWebNotServ });
   };
-  
+
   var findSpecificNotificiationService = function(serviceId) {
     webinos.discovery.findServices(
-      new ServiceType('http://webinos.org/api/webnotification'), 
-      { onFound: foundWebNotServ }, null, 
+      new ServiceType('http://webinos.org/api/notifications'),
+      { onFound: foundWebNotServ }, null,
       {serviceID : serviceId }
       );
   }
-  
+
   // trigger either a reminder to every device or a reminder to just those selected.
   if (reminder.hasOwnProperty("devices") && reminder.devices !== undefined && Array.isArray(reminder.devices) && reminder.devices.length > 0) {
     for (var i=0; i<reminder.devices.length; i++) {
@@ -137,7 +137,7 @@ alerter.showWebinosNotification = function(reminder) {
 
 alerter.showReminderAlert = function(reminder) {
     $("#reminderNotification").show();
-    if (reminder.showing === undefined || !reminder.showing) {    
+    if (reminder.showing === undefined || !reminder.showing) {
         alerter.showBrowserNotification(reminder);
         alerter.showHTMLNotification(reminder);
         alerter.showWebinosNotification(reminder);
@@ -160,9 +160,9 @@ alerter.save = function(reminder) {
     var clonedReminder = rubbishClone(reminder);
     var detatchedClonedReminder = alerter.detatchReminderPlace(clonedReminder);
     //TODO: Enable this.
-    storer.saveReminder(detatchedClonedReminder, function() { 
-        console.log("Successfully set the reminder to 'disabled' after user clicks 'ok'");    
-    }, function(err) { 
+    storer.saveReminder(detatchedClonedReminder, function() {
+        console.log("Successfully set the reminder to 'disabled' after user clicks 'ok'");
+    }, function(err) {
         console.log("Failed to set the reminder to 'disabled' after user clicks 'ok'");
     });
     main.loadViewPage();
@@ -171,15 +171,15 @@ alerter.save = function(reminder) {
 alerter.jalert = function(text) {
     $('#alertPopupDiv').text(text);
     $('#alertPopupDiv').dialog(
-        {   
-            buttons: { 
+        {
+            buttons: {
                 Ok : function() {
                     $(this).dialog("close");
                 }
             },
             dialogClass: "alert",
             modal : true
-        }    
+        }
     );
 }
 
