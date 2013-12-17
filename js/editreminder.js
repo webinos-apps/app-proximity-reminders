@@ -26,8 +26,8 @@ editor.createAddObjects = function(reminders, places) {
         reminder: {},
         place: null
     };
-    
-    
+
+
     add.place = editor.getEditPlace(places);
     if (add.isNew) {
         add.reminder.id = storer.createReminderId();
@@ -40,15 +40,15 @@ editor.createAddObjects = function(reminders, places) {
     add.reminder.when = editor.getEditWhen();
     add.reminder.where = [];
     add.reminder.where.push(editor.getEditWhere(add.place));
-    add.reminder.devices = editor.getEditDevices();    
-        
+    add.reminder.devices = editor.getEditDevices();
+
     return add;
 }
 
 editor.getEditDevices = function() {
   var deviceList = [];
   var serviceList = $("#devicesSelect").val() || [];
-  
+
   for (var i=0;i<serviceList.length; i++) {
       console.log("Looking for notification service : " + serviceList[i]);
       deviceList.push(editor.serviceMap[serviceList[i]]);
@@ -104,13 +104,13 @@ editor.getEditWhen = function() {
         var dateEnd = $("#datepicker2").datepicker("getDate");
         var dateStart = $("#datepicker").datepicker("getDate");
         var recurr = $('#recurringSelect').val();
-        
+
         return {
             startdate: dateStart,
             enddate: dateEnd,
             recurring: recurr
         };
-        
+
     } else {
         return "anytime";
     }
@@ -123,16 +123,16 @@ editor.isPlace = function(place) {
 editor.saveEditReminder = function(reminders, places) {
     var add = editor.createAddObjects(reminders, places);
 
-   console.log("Adding: " + JSON.stringify(add.reminder));  
-   console.log("Adding: " + JSON.stringify(add.place));  
+   console.log("Adding: " + JSON.stringify(add.reminder));
+   console.log("Adding: " + JSON.stringify(add.place));
 
    storer.savePlace(add.place, function () {
         if (editor.isPlace(add.place)) {
             places[add.place.id] = add.place;
-            console.log("Added " + add.place.id);            
+            console.log("Added " + add.place.id);
         }
         reminders[add.reminder.id] = add.reminder;
-       
+
         storer.saveReminder(add.reminder, function () {
             //re-attach place to reminder
             if (editor.isPlace(add.place)) {
@@ -222,10 +222,10 @@ editor.hideProximityField = function() {
 editor.showProximityField = function(reminder) {
     //HACK: Currently only works for single places.
     $('#proximityDiv').show();
-    if (reminder === undefined || 
-            reminder.where === undefined || 
-            reminder.where[0] === undefined || 
-            reminder.where[0].proximity === undefined || 
+    if (reminder === undefined ||
+            reminder.where === undefined ||
+            reminder.where[0] === undefined ||
+            reminder.where[0].proximity === undefined ||
             reminder.where[0].proximity.amount === undefined) {
         $('#proximityAmount').val("10");
     } else {
@@ -242,17 +242,17 @@ editor.setEditFields = function(reminders, places, reminder) {
     editor.setEditDateFields(reminder);
     editor.setEditPlaceFields(places, reminder);
     editor.setEditDevicesFields(reminder);
-    
+
     $("#saveReminderButton").unbind("click");
-    $("#saveReminderButton").bind("click", function() {     
+    $("#saveReminderButton").bind("click", function() {
         console.log("Clicked saveEditReminder");
         editor.saveEditReminder(reminders, places);
     });
 }
 
 editor.setEditEnabled = function(reminder) {
-    $('#editEnabled').prop('checked', (reminder === undefined || reminder.enabled === undefined || 
-        reminder.enabled));    
+    $('#editEnabled').prop('checked', (reminder === undefined || reminder.enabled === undefined ||
+        reminder.enabled));
 }
 
 editor.setEditDescription = function(reminder) {
@@ -306,29 +306,29 @@ editor.setEditDevicesFields = function(reminder) {
     //remove all services
     $("#devicesSelect option").filter(function () {
         return ($(this).attr("class") !== "persistentOption");
-    }).remove();  
-    
+    }).remove();
+
     //add services that we know about already
     if (reminder !== undefined && reminder.hasOwnProperty("devices") && reminder.devices !== null && Array.isArray(reminder.devices) && reminder.devices.length > 0) {
       for (var i=0;i<reminder.devices.length; i++) {
-        $('#devicesSelect').append('<option id="deviceOpt-' + 
-            reminder.devices[i].id + '" value="' + reminder.devices[i].id + 
+        $('#devicesSelect').append('<option id="deviceOpt-' +
+            reminder.devices[i].id + '" value="' + reminder.devices[i].id +
             '" selected="true">' + reminder.devices[i].displayName + ' on ' + reminder.devices[i].serviceAddress + '</option>');
-        editor.addServiceToList(reminder.devices[i]);            
+        editor.addServiceToList(reminder.devices[i]);
       }
     }
-    
+
     //find all services again (this will load asynchronously - might be a problem)
     webinos.discovery.findServices(
-      new ServiceType('http://webinos.org/api/webnotification'), 
+      new ServiceType('http://webinos.org/api/notifications'),
       { onFound: function(service) {
           if ($('#deviceOpt-' + service.id).length === 0) {
-            $('#devicesSelect').append('<option id="deviceOpt-' + service.id + 
-              '" value="' + service.id + '" selected="false">' + 
+            $('#devicesSelect').append('<option id="deviceOpt-' + service.id +
+              '" value="' + service.id + '" selected="false">' +
               service.displayName + ' on ' + service.serviceAddress + '</option>');
           }
           editor.addServiceToList(service);
-        } 
+        }
       }
     );
 }
@@ -353,44 +353,44 @@ editor.setEditDateFields = function(reminder) {
     var dtOptionsStart = {
         onClose : function(dateText, inst) {
             if ($("#datepicker2").val() !== '') {
-			    var testStartDate = $("#datepicker").datetimepicker('getDate');
-			    var testEndDate = $("#datepicker2").datetimepicker('getDate');
-			    if (testStartDate > testEndDate)
-				    $("#datepicker2").datetimepicker('setDate', testStartDate);
-		    }
-		    else {
-			    $("#datepicker2").val(dateText);
-		    }
+             var testStartDate = $("#datepicker").datetimepicker('getDate');
+             var testEndDate = $("#datepicker2").datetimepicker('getDate');
+             if (testStartDate > testEndDate)
+                $("#datepicker2").datetimepicker('setDate', testStartDate);
+          }
+          else {
+             $("#datepicker2").val(dateText);
+          }
         },
         onSelect: function(startDateText, inst) {
-            $("#datepicker2").datetimepicker('option', 'minDate', 
+            $("#datepicker2").datetimepicker('option', 'minDate',
                 $("#datepicker").datetimepicker('getDate') );
         }
     };
-    
+
     var dtOptionsEnd = {
         onClose : function(dateText, inst) {
             if ($("#datepicker").val() !== '') {
-			    var testStartDate = $("#datepicker").datetimepicker('getDate');
-			    var testEndDate = $("#datepicker2").datetimepicker('getDate');
-			    if (testStartDate > testEndDate)
-				    $("#datepicker2").datetimepicker('setDate', testStartDate);
-		    }
-		    else {
-			    $("#datepicker").val(dateText);
-		    }
+             var testStartDate = $("#datepicker").datetimepicker('getDate');
+             var testEndDate = $("#datepicker2").datetimepicker('getDate');
+             if (testStartDate > testEndDate)
+                $("#datepicker2").datetimepicker('setDate', testStartDate);
+          }
+          else {
+             $("#datepicker").val(dateText);
+          }
         },
         onSelect: function(startDateText, inst) {
-            $("#datepicker").datetimepicker('option', 'maxDate', 
+            $("#datepicker").datetimepicker('option', 'maxDate',
                 $("#datepicker2").datetimepicker('getDate') );
         }
     };
 
     if (reminder !== undefined) {
         if (reminder.when !== undefined && reminder.when.startdate !== undefined && reminder.when.enddate !== undefined) {
-            var currOption = $("<option id='_DATE_CURRENT' value='_DATE_CURRENT'>" + 
+            var currOption = $("<option id='_DATE_CURRENT' value='_DATE_CURRENT'>" +
                 reminder.when.startdate.toString() + "</option>");
-                
+
             currOption.attr('selected', true);
             $("#dateSelect").append(currOption);
             $("#dateSelect").val(reminder.when.startdate.toString());
@@ -398,10 +398,10 @@ editor.setEditDateFields = function(reminder) {
 
             $("#datepicker").datetimepicker(dtOptionsStart);
             $("#datepicker").datetimepicker("setDate", reminder.when.startdate);
-            
+
             $("#datepicker2").datetimepicker(dtOptionsEnd);
             $("#datepicker2").datetimepicker("setDate", reminder.when.enddate);
-            
+
 
             if (reminder.when.recurring !== null) {
                 $("#recurringSelect").val(reminder.when.recurring);

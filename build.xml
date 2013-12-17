@@ -1,0 +1,29 @@
+<project name="ProximityReminder" basedir="." default="main">
+    <property name="build.dir" value="."/>
+    <property name="widget.file" value="ProximityReminder"/>
+    <property name="src.dir" value="js"/>
+    <property name="css.dir" value="css"/>
+    <property name="fonts.dir" value="fonts"/>
+    <property name="certs.dir" value="example-certs"/>
+
+    <target name="clean">
+        <delete file="${build.dir}/${widget.file}.wgt" />
+    </target>
+
+    <target name="build">
+        <zip destfile="${widget.file}.zip" encoding="UTF-8">
+            <fileset dir="${basedir}">
+                <include name="${css.dir}/**"/>
+                <include name="${src.dir}/**"/>
+                <include name="${fonts.dir}/**"/>
+                <include name="${certs.dir}/**"/>
+                <include name="config.xml"/>
+                <include name="index.html"/>
+                <include name="remind_me.png"/>
+            </fileset>
+        </zip>
+        <move file="${basedir}/${widget.file}.zip" tofile="${basedir}/${widget.file}.wgt"/>
+    </target>
+
+    <target name="main" depends="clean,build"/>
+</project>

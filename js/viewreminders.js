@@ -36,6 +36,7 @@ viewer.getReminderItem = function(reminder) {
 
     var whenRecurring = $('<div class="reminderItemDetails reminderItemRecurring"></div');
     if (reminder.when !== undefined && reminder.when !== "anytime" && reminder.when.startdate !== undefined && reminder.when.enddate !== undefined) {
+        console.log(reminder);
         whenStartTime.append(reminder.when.startdate.toLocaleTimeString());
         whenStartDate.append(reminder.when.startdate.toLocaleDateString());
         whenEndTime.append(reminder.when.enddate.toLocaleTimeString());

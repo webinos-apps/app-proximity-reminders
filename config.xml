@@ -7,17 +7,17 @@
   <content src="index.html" />
   <icon src="remind_me.png" />
   <author>John Lyle</author>
-  
+
   <!-- features needed -->
   <feature name="http://webinos.org/feature/internet" required="true">
     <!-- should this be http://webinos.org/core/network-access ?-->
     <param name="csp-img-src"     value="http://maps.googleapis.com"/>
     <param name="csp-script-src"  value="http://maps.googleapis.com"/>
   </feature>
-  <feature name="http://webinos.org/api/webnotification" required="false" />
+  <feature name="http://webinos.org/api/notifications" required="false" />
   <feature name="http://webinos.org/api/file" required="true" />
   <feature name="http://www.w3.org/ns/api-perms/geolocation" required="true" />
-  
+
   <!-- privacy policies -->
   <DataHandlingPolicy PolicyId="#current">
     <AuthorizationsSet>
@@ -27,7 +27,7 @@
     </AuthorizationsSet>
     <ObligationsSet />
   </DataHandlingPolicy>
-  
+
   <!-- mapping policies to APIs -->
   <ProvisionalActions>
     <ProvisionalAction>
@@ -38,10 +38,10 @@
       </DeveloperProvidedDescription>
     </ProvisionalAction>
     <ProvisionalAction>
-      <AttributeValue>http://webinos.org/api/webnotification</AttributeValue>
+      <AttributeValue>http://webinos.org/api/notifications</AttributeValue>
       <AttributeValue>#current</AttributeValue>
       <DeveloperProvidedDescription language="EN">
-        Notifications are used to alert you when a reminder is valid - e.g., at a 
+        Notifications are used to alert you when a reminder is valid - e.g., at a
         specific time or place.
       </DeveloperProvidedDescription>
     </ProvisionalAction>
@@ -59,6 +59,6 @@
         Internet access is used to load Google Maps
       </DeveloperProvidedDescription>
     </ProvisionalAction>
-  </ProvisionalActions>  
+  </ProvisionalActions>
 </widget>
 
